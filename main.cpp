@@ -5,7 +5,6 @@
 #include <stdexcept>
 
 #include "parser.h"
-#include "Func.h"
 #include "func_list.h"
 
 enum StringValue { zero, exitt, get, getSym, getEPS };
@@ -30,8 +29,15 @@ int main() {
 
 		std::string curr_func = parse_func(query);
 	
-		choose(mapFuncVals[curr_func]);
-		
+		std::vector<std::string> args = parse_args(query);
+
+		std::cout << "[args]: ";
+
+		for(auto it = args.begin(); it != args.end(); it++) {
+			std::cout << *it << std::endl;
+		}
+
+		std::cout << std::endl;
 	}
 
 	return 0;

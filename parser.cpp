@@ -26,14 +26,28 @@ std::string parse_func(std::string query) {
 
 std::vector<std::string> parse_args(std::string query) {
 
-	size_t first_par = query.find("(");
+	size_t most_recent_comma = query.find("(");
 
 	std::vector<std::string> args;
 
-	for(size_t i = first_par + 1; i < query.length()-1; i++) {
+	std::string curr_string = query.substr(most_recent_comma + 1);
+
+	if(curr_string.find(',') == -1) {
+
+		args.push_back(curr_string.substr(0, curr_string.length() - 1));
+
+	} else {
+
+		while(curr_string.find(',') != -1) {
+			size_t next_comma = curr_string.find(',');
+			args.push_back(curr_string.substr(0, next_comma));
+			curr_string = curr_string.substr(next_comma + 1);
+		}
+
+		args.push_back(curr_string.substr(0, curr_string.length() - 1));
 
 	}
-
+	
 	return args;
 }
 
