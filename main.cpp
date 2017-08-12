@@ -3,6 +3,12 @@
 #include <map>
 #include <exception>
 #include <stdexcept>
+#include <algorithm>
+#include <curl/curl.h>
+
+#include <libxml/tree.h>
+#include <libxml/HTMLparser.h>
+#include <libxml++/libxml++.h>
 
 #include "parser.h"
 #include "func_list.h"
@@ -25,25 +31,17 @@ int main() {
 		std::cout << ">> ";
 		std::getline(std::cin, query);
 
-		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
+		query.erase(std::remove(query.begin(), query.end(), '\n'), query.end());
 
-		std::string curr_func = parse_func(query);
-	
-		std::vector<std::string> args = parse_args(query);
-
-		std::cout << "[args]: ";
-
-		for(auto it = args.begin(); it != args.end(); it++) {
-			std::cout << *it << std::endl;
-		}
-
-		std::cout << std::endl;
+		int price = get_price(query);
 	}
 
 	return 0;
 }
 
 void choose(StringValue query) {
+
+	std::string temp = "";
 
 	switch (query) {
 		case zero:
@@ -53,7 +51,7 @@ void choose(StringValue query) {
 			exit(0);
 			break;
 		case get:
-			get_info();
+			get_price(temp);
 			break;
 	}
 }
