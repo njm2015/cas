@@ -4,11 +4,14 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 std::string parse_func(std::string query);
 
 std::vector<std::string> parse_args(std::string query);
 
-std::string no_spaces(std::string function);
+bool validate_date(tm* date);
+
+tm* parse_date(std::string date);
 
 #endif

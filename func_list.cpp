@@ -9,9 +9,21 @@
 #include <libxml/HTMLparser.h>
 #include <libxml++/libxml++.h>
 
+void usage(std::string func_name) {
+
+	std::cout << "Incorrect usage for " << func_name << ". 'help' for usages." << std::endl;
+}
+
+int day_of_week(tm* date) {
+
+	static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+	date->tm_year -= date->tm_mon < 3;
+	return (date->tm_year + date->tm_year/4 - date->tm_year/100 + date->tm_year/400 + t[date->tm_mon-1] + date->tm_mday) % 7;
+}
+
 void error(std::string message) {
+
 	std::cout << "Error in " << message << std::endl;
-	exit(0);
 }
 
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -21,6 +33,7 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 }
 
 std::string get_page(std::string URL) {
+
 	CURL* curl;
 	CURLcode res;
 	std::string readBuffer;
@@ -57,30 +70,49 @@ xmlNode* get_root(xmlDoc* tree) {
 }
 
 void unknown_func() {
+
 	std::cout << "enter known function (list of functions 'help')" << std::endl;
 }
 
-int get_price(std::string symbol) {
+double get_price(std::string symbol, std::vector<std::string> args) {
 	
-	std::string URL = "http://bigcharts.marketwatch.com/historical/default.asp?symb="
-						+ symbol + "&closeDate=07%2F07%2F2009";
+	double price;
+	std::string URL, html, xpath;
 
-	std::string html = get_page(URL);
+	if(args.size() < 1) {
+		usage("getPrice");
+		return -1;
+	}
+/*
+	tm* date = parse_date(args[0]);
+
+	if(!date)
+		return -1;
+
+	if(dayOfWeek)
+
+	URL = "http://bigcharts.marketwatch.com/historical/default.asp?symb="
+						+ symbol + "&closeDate=" + date->tm_mon 
+						+ "%2F" + date->tm_mday + "%2F" + date->tm_year;
+*/
+	html = get_page(URL);
 
 	xmlDoc* doc = get_tree(html);
 	xmlpp::Element* root = new xmlpp::Element(get_root(doc));
 
-	std::string xpath = "//table[@class=\"historicalquote fatbottomed\"]//tr[3]/td/text()";
+	xpath = "//table[@class=\"historicalquote fatbottomed\"]//tr[3]/td/text()";
 
 	auto elements = root->find(xpath);
 	if(elements.size() == 1) {
-		std::cout << dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content() << std::endl;
+		price = std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content(), nullptr);
 	} else {
 		std::cout << "Invalid symbol" << std::endl;
+		return -1;
 	}
 
 	delete root;
+	//delete date;
 	xmlFreeDoc(doc);
 
-	return 0;
+	return price;	
 }
