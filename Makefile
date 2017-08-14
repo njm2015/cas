@@ -1,8 +1,8 @@
 CXX = g++
-CXXFLAGS = -g -pg `xml2-config --cflags --libs` `pkg-config libxml++-3.0 --cflags --libs` --std=c++1y
+CXXFLAGS = -Wall -g -pg `xml2-config --cflags --libs` `pkg-config libxml++-2.6 --cflags --libs` --std=c++1y -Wno-inconsistent-missing-override
 
 
-LDFLAGS = -lcurl `pkg-config libxml++-3.0 --cflags --libs`
+LDFLAGS = -lcurl `pkg-config libxml++-2.6 --cflags --libs`
 
 OBJECTS = main.o parser.o func_list.o
 

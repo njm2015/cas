@@ -11,7 +11,7 @@
 
 void usage(std::string func_name);
 
-int day_of_week(tm* date);
+int day_of_week(int day, int month, int year);
 
 void error(std::string message);
 
@@ -21,6 +21,6 @@ std::string get_page(std::string URL);
 
 void unknown_func();
 
-double get_price(std::string symbol, std::vector<std::string> args);
+double get_price(std::vector<std::string> args);
 
 #endif

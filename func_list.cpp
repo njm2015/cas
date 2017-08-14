@@ -1,4 +1,5 @@
 #include "func_list.h"
+#include "parser.h"
 
 #include <iostream>
 #include <string>
@@ -14,11 +15,11 @@ void usage(std::string func_name) {
 	std::cout << "Incorrect usage for " << func_name << ". 'help' for usages." << std::endl;
 }
 
-int day_of_week(tm* date) {
+int day_of_week(int day, int month, int year) {
 
 	static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
-	date->tm_year -= date->tm_mon < 3;
-	return (date->tm_year + date->tm_year/4 - date->tm_year/100 + date->tm_year/400 + t[date->tm_mon-1] + date->tm_mday) % 7;
+	year -= month < 3;
+	return (year + year/4 - year/100 + year/400 + t[month-1] + day) % 7;
 }
 
 void error(std::string message) {
@@ -74,27 +75,40 @@ void unknown_func() {
 	std::cout << "enter known function (list of functions 'help')" << std::endl;
 }
 
-double get_price(std::string symbol, std::vector<std::string> args) {
+double get_price(std::vector<std::string> args) {
 	
 	double price;
 	std::string URL, html, xpath;
 
-	if(args.size() < 1) {
+	if(args.size() < 2) {
 		usage("getPrice");
 		return -1;
 	}
-/*
-	tm* date = parse_date(args[0]);
 
-	if(!date)
+	tm* date = parse_date(args[1]);
+
+	if(!date) {
 		return -1;
+	}
 
-	if(dayOfWeek)
+	int week_day = day_of_week(date->tm_mday, date->tm_mon, date->tm_year);
+
+	if(week_day == 6 || week_day == 0) {
+		error("in parsing date. Enter weekday (Mon-Fri)");
+		return -1;
+	}
+
+	std::string day = std::to_string(date->tm_mday);
+	std::string month = std::to_string(date->tm_mon);
+	std::string year = std::to_string(date->tm_year);
+	std::string symbol = args[0];
 
 	URL = "http://bigcharts.marketwatch.com/historical/default.asp?symb="
-						+ symbol + "&closeDate=" + date->tm_mon 
-						+ "%2F" + date->tm_mday + "%2F" + date->tm_year;
-*/
+						+ symbol + "&closeDate=" 
+						+ month + "%2F"
+						+ day + "%2F"
+						+ year;
+
 	html = get_page(URL);
 
 	xmlDoc* doc = get_tree(html);
@@ -111,7 +125,7 @@ double get_price(std::string symbol, std::vector<std::string> args) {
 	}
 
 	delete root;
-	//delete date;
+	delete date;
 	xmlFreeDoc(doc);
 
 	return price;	

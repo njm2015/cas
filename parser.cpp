@@ -60,7 +60,8 @@ bool validate_date(tm* date) {
 	   (date->tm_mon == 2 && date->tm_mday > 28) ||
 	   (date->tm_mon < 1 || date->tm_mday < 1 || date->tm_year < 1900) || 
 	   (date->tm_mon > 12) ||
-	   (date->tm_mon >= curr->tm_mon && date->tm_mday > curr->tm_mday && date->tm_year >= curr->tm_year + 1900)) {
+	   (date->tm_mon >= curr->tm_mon && date->tm_mday > curr->tm_mday && date->tm_year >= curr->tm_year + 1900) ||
+	   (date->tm_mon <= 2 && date->tm_mday < 19 && date->tm_year <= 2002)) {
 		
 		error("in parsing date. Enter valid date MM/DD/YYYY");
 		return 0;
@@ -93,8 +94,9 @@ tm* parse_date(std::string date) {
 		return NULL;
 	}
 
-	if(validate_date(ret))
+	if(validate_date(ret)) {
 		return ret;
-	else
+	} else {
 		return NULL;
+	}
 }

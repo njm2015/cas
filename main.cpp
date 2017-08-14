@@ -15,12 +15,13 @@
 #include "parser.h"
 #include "func_list.h"
 
-enum StringValue { zero, exitt, getPrice };
+enum StringValue { zero, exitt, getprice };
 
 static std::map<std::string, StringValue> mapFuncVals;
 
+double choose(StringValue function, std::vector<std::string> args);
+
 void initialize();
-void choose(StringValue query, std::vector<std::string> args);
 
 int main() {
 
@@ -28,64 +29,41 @@ int main() {
 
 	std::cout << "Welcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
 
-	//while(true) {
+	while(true) {
 		std::string query;
-		std::cout << ">> ";
+		std::cout << std::endl << ">> ";
 		std::getline(std::cin, query);
 
 		query.erase(std::remove(query.begin(), query.end(), '\n'), query.end());
 
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
-/*
-		double price = get_price(parse_func(query), parse_args(query));
 
-		std::cout << price << std::endl;
-*/
-		tm* date = new tm();
-		date->tm_mday = 13;
-		date->tm_mon = 8;
-		date->tm_year = 2017;
+		double price = choose(mapFuncVals[parse_func(query)], parse_args(query));
 
-		int day = day_of_week(date);
-
-		std::cout << day << std::endl;
-
-		delete date;
-/*
-		std::string func = parse_func(query);
-		std::vector<std::string> args = parse_args(query);
-
-		std::cout << "[function]: " << func << std::endl;
-		std::cout << "[args]: ";
-
-		for(auto it = args.begin(); it != args.end(); it++) {
-			std::cout << *it << " ";
+		if(price != -1) {
+			std::cout << price << std::endl;
 		}
-		std::cout << std::endl;
-*/
-	//}
+	}
 
 	return 0;
 }
 
-void choose(StringValue query, std::vector<std::string> args) {
+double choose(StringValue function, std::vector<std::string> args) {
 
-	std::string temp = "";
-
-	switch (query) {
+	switch (function) {
 		case zero:
 			unknown_func();
 			break;
 		case exitt:
 			exit(0);
 			break;
-		case getPrice:
-			get_price(temp, args);
+		case getprice:
+			return get_price(args);
 			break;
 	}
 }
 
 void initialize() {
 	mapFuncVals["exit"] = exitt;
-	mapFuncVals["getPrice"] = getPrice;
+	mapFuncVals["getprice"] = getprice;
 }
