@@ -3,17 +3,25 @@
 #include <map>
 #include <exception>
 #include <stdexcept>
+#include <algorithm>
+#include <curl/curl.h>
+
+#include <libxml/tree.h>
+#include <libxml/HTMLparser.h>
+#include <libxml++/libxml++.h>
+
+#include <time.h>
 
 #include "parser.h"
-#include "Func.h"
 #include "func_list.h"
 
-enum StringValue { zero, exitt, get, getSym, getEPS };
+enum StringValue { zero, exitt, getprice };
 
 static std::map<std::string, StringValue> mapFuncVals;
 
+void choose(StringValue function, std::vector<std::string> args);
+
 void initialize();
-void choose(StringValue query);
 
 int main() {
 
@@ -23,38 +31,35 @@ int main() {
 
 	while(true) {
 		std::string query;
-		std::cout << ">> ";
+		std::cout << std::endl << ">> ";
 		std::getline(std::cin, query);
+
+		query.erase(std::remove(query.begin(), query.end(), '\n'), query.end());
 
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
-		std::string curr_func = parse_func(query);
-	
-		choose(mapFuncVals[curr_func]);
-		
+		choose(mapFuncVals[parse_func(query)], parse_args(query));
 	}
 
 	return 0;
 }
 
-void choose(StringValue query) {
+void choose(StringValue function, std::vector<std::string> args) {
 
-	switch (query) {
+	switch (function) {
 		case zero:
 			unknown_func();
-			break;
+			return;
 		case exitt:
 			exit(0);
-			break;
-		case get:
-			get_info();
-			break;
+			return;
+		case getprice:
+			get_price(args);
+			return;
 	}
 }
 
 void initialize() {
 	mapFuncVals["exit"] = exitt;
-	mapFuncVals["get"] = get;
-	mapFuncVals["getsym"] = getSym;
-	mapFuncVals["geteps"] = getEPS;
+	mapFuncVals["getprice"] = getprice;
 }
