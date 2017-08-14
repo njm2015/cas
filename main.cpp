@@ -19,7 +19,7 @@ enum StringValue { zero, exitt, getprice };
 
 static std::map<std::string, StringValue> mapFuncVals;
 
-double choose(StringValue function, std::vector<std::string> args);
+void choose(StringValue function, std::vector<std::string> args);
 
 void initialize();
 
@@ -38,28 +38,24 @@ int main() {
 
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
-		double price = choose(mapFuncVals[parse_func(query)], parse_args(query));
-
-		if(price != -1) {
-			std::cout << price << std::endl;
-		}
+		choose(mapFuncVals[parse_func(query)], parse_args(query));
 	}
 
 	return 0;
 }
 
-double choose(StringValue function, std::vector<std::string> args) {
+void choose(StringValue function, std::vector<std::string> args) {
 
 	switch (function) {
 		case zero:
 			unknown_func();
-			break;
+			return;
 		case exitt:
 			exit(0);
-			break;
+			return;
 		case getprice:
-			return get_price(args);
-			break;
+			get_price(args);
+			return;
 	}
 }
 

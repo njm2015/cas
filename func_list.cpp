@@ -75,27 +75,28 @@ void unknown_func() {
 	std::cout << "enter known function (list of functions 'help')" << std::endl;
 }
 
-double get_price(std::vector<std::string> args) {
+void get_price(std::vector<std::string> args) {
 	
 	double price;
 	std::string URL, html, xpath;
 
 	if(args.size() < 2) {
 		usage("getPrice");
-		return -1;
+		return;
 	}
 
 	tm* date = parse_date(args[1]);
 
 	if(!date) {
-		return -1;
+		return;
 	}
 
 	int week_day = day_of_week(date->tm_mday, date->tm_mon, date->tm_year);
 
 	if(week_day == 6 || week_day == 0) {
 		error("in parsing date. Enter weekday (Mon-Fri)");
-		return -1;
+		delete date;
+		return;
 	}
 
 	std::string day = std::to_string(date->tm_mday);
@@ -118,15 +119,13 @@ double get_price(std::vector<std::string> args) {
 
 	auto elements = root->find(xpath);
 	if(elements.size() == 1) {
-		price = std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content(), nullptr);
+		std::cout << std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content(), nullptr) << std::endl;
 	} else {
 		std::cout << "Invalid symbol" << std::endl;
-		return -1;
 	}
 
 	delete root;
 	delete date;
 	xmlFreeDoc(doc);
 
-	return price;	
 }

@@ -21,6 +21,6 @@ std::string get_page(std::string URL);
 
 void unknown_func();
 
-double get_price(std::vector<std::string> args);
+void get_price(std::vector<std::string> args);
 
 #endif
