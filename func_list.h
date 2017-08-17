@@ -21,6 +21,12 @@ std::string get_page(std::string URL);
 
 void unknown_func();
 
-void get_price(std::vector<std::string> args);
+double get_price(std::vector<std::string> args);
+
+double get_pe(std::vector<std::string> args);
+
+void print_price(std::vector<std::string> args);
+
+void print_pe(std::vector<std::string> args);
 
 #endif

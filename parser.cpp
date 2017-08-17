@@ -7,23 +7,11 @@
 #include "func_list.h"
 #include "parser.h"
 
-
-std::string parse_func(std::string query) {
-
-	size_t first_space = query.find(" ");
-
-	std::string function = query.substr(0, first_space);
-
-	return function;
-}
-
 std::vector<std::string> parse_args(std::string query) {
-
-	size_t most_recent_space = query.find(" ");
 
 	std::vector<std::string> args;
 
-	std::string curr_string = query.substr(most_recent_space + 1);
+	std::string curr_string = query;
 
 	if(curr_string.find(' ') == -1) {
 

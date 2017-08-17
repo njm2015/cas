@@ -6,8 +6,6 @@
 #include <vector>
 #include <algorithm>
 
-std::string parse_func(std::string query);
-
 std::vector<std::string> parse_args(std::string query);
 
 bool validate_date(tm* date);

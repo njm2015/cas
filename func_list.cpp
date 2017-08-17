@@ -15,6 +15,12 @@ void usage(std::string func_name) {
 	std::cout << "Incorrect usage for " << func_name << ". 'help' for usages." << std::endl;
 }
 
+void unknown_func() {
+
+	std::cout << "enter known function (list of functions 'help')" << std::endl;
+}
+
+
 int day_of_week(int day, int month, int year) {
 
 	static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
@@ -70,25 +76,20 @@ xmlNode* get_root(xmlDoc* tree) {
 	return xmlDocGetRootElement(tree);
 }
 
-void unknown_func() {
-
-	std::cout << "enter known function (list of functions 'help')" << std::endl;
-}
-
-void get_price(std::vector<std::string> args) {
+double get_price(std::vector<std::string> args) {
 	
 	double price;
 	std::string URL, html, xpath;
 
 	if(args.size() < 2) {
-		usage("getPrice");
-		return;
+		usage("get price");
+		return -1;
 	}
 
 	tm* date = parse_date(args[1]);
 
 	if(!date) {
-		return;
+		return -1;
 	}
 
 	int week_day = day_of_week(date->tm_mday, date->tm_mon, date->tm_year);
@@ -96,7 +97,7 @@ void get_price(std::vector<std::string> args) {
 	if(week_day == 6 || week_day == 0) {
 		error("in parsing date. Enter weekday (Mon-Fri)");
 		delete date;
-		return;
+		return -1;
 	}
 
 	std::string day = std::to_string(date->tm_mday);
@@ -119,13 +120,62 @@ void get_price(std::vector<std::string> args) {
 
 	auto elements = root->find(xpath);
 	if(elements.size() == 1) {
-		std::cout << std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content(), nullptr) << std::endl;
+		price = std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content());
 	} else {
 		std::cout << "Invalid symbol" << std::endl;
+		return -1;
 	}
 
 	delete root;
 	delete date;
 	xmlFreeDoc(doc);
 
+	return price;
+}
+
+double get_pe(std::vector<std::string> args) {
+
+	double pe;
+	std::string URL, html, xpath;
+
+	if(args.size() < 1) {
+		usage("get pe");
+	}
+
+	URL = "https://finance.yahoo.com/quote/"
+			+ args[0] + "?p="
+			+ args[0];
+
+	html = get_page(URL);
+
+	xmlDoc* doc = get_tree(html);
+	xmlpp::Element* root = new xmlpp::Element(get_root(doc));
+
+	xpath = "//td[@data-test=\"PE_RATIO-value\"]/span/text()";
+
+	auto elements = root->find(xpath);
+	if(elements.size() == 1) {
+		pe = std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content());
+	} else {
+		std::cout << "Invalid symbol" << std::endl;
+		return -1;
+	}
+
+	return pe;
+}
+
+void print_price(std::vector<std::string> args) {
+
+	double price = get_price(args);
+	if(price != -1) {
+		std::cout << price << std::endl;
+	}
+}
+
+void print_pe(std::vector<std::string> args) {
+
+	double pe = get_pe(args);
+	if(pe != -1) {
+		std::cout << pe << std::endl;
+	}
 }
