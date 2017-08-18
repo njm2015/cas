@@ -14,7 +14,6 @@
 
 #include "parser.h"
 #include "func_list.h"
-#include "choose_func.h"
 
 enum MainValue { zero, exitt, print, get };
 enum SubValue { base, price, pe };
@@ -24,6 +23,9 @@ static std::map<std::string, SubValue> mapSubVals;
 
 void main_choose(std::vector<std::string> args);
 
+void main_choose(std::vector<std::string> args);
+void print_choose(std::vector<std::string> args);
+std::string get_choose(std::vector<std::string> args);
 void initialize_main_value();
 void initialize_sub_value();
 
@@ -52,7 +54,7 @@ int main() {
 
 void main_choose(std::vector<std::string> args) {
 
-	switch (mapFuncVals[args[0]]) {
+	switch (mapMainVals[args[0]]) {
 		case zero:
 			unknown_func();
 			return;
@@ -63,19 +65,19 @@ void main_choose(std::vector<std::string> args) {
 
 		case print:
 			args.erase(args.begin());
-			print_choose(args, mapVals);
+			print_choose(args);
 			return;
 
 		case get:
 			args.erase(args.begin());
-			get_choose(args, mapVals);
+			get_choose(args);
 			return;
 	}
 }
 
-void print_choose(std::vector<std::string> args, std::map<std::string, ChooseValue> mapVals) {
+void print_choose(std::vector<std::string> args) {
 
-	switch(mapVals[args[0]]) {
+	switch(mapSubVals[args[0]]) {
 		case zero:
 			unknown_func();
 			return;
@@ -92,18 +94,18 @@ void print_choose(std::vector<std::string> args, std::map<std::string, ChooseVal
 	}
 }
 
-std::string get_choose(std::vector<std::string> args, std::map<std::string, ChooseValue> mapVals) {
+std::string get_choose(std::vector<std::string> args) {
 	std::string ret;
 	return ret;
 }
 
 void initialize_main_value() {
-	mapFuncVals["exit"] = exitt;
-	mapFuncVals["print"] = print;
-	mapFuncVals["get"] = get;
+	mapMainVals["exit"] = exitt;
+	mapMainVals["print"] = print;
+	mapMainVals["get"] = get;
 }
 
 void initialize_sub_value() {
-	mapVals["price"] = price;
-	mapVals["pe"] = pe;
+	mapSubVals["price"] = price;
+	mapSubVals["pe"] = pe;
 }

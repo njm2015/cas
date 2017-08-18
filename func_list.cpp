@@ -81,16 +81,30 @@ double get_price(std::vector<std::string> args) {
 	double price;
 	std::string URL, html, xpath;
 
-	if(args.size() < 2) {
+	if(args.size() < 1) {
 		usage("get price");
 		return -1;
 	}
 
-	tm* date = parse_date(args[1]);
+	tm* date;
+
+	std::cout << "[args.size()]: " << args.size() << std::endl;
+
+	if(args.size() == 2) {
+		date = parse_date(args[1]);
+	} else {
+		time_t rawtime;
+		time(&rawtime);
+		date = localtime(&rawtime);
+	}
 
 	if(!date) {
 		return -1;
 	}
+
+	std::cout << "[date->tm_mday]: " << date->tm_mday << std::endl;
+	std::cout << "[date->tm_mon]: " << date->tm_mon << std::endl;
+	std::cout << "[date->tm_year]; " << date->tm_year << std::endl;
 
 	int week_day = day_of_week(date->tm_mday, date->tm_mon, date->tm_year);
 
