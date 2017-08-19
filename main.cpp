@@ -1,22 +1,20 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <exception>
-#include <stdexcept>
 #include <algorithm>
 #include <curl/curl.h>
-
+#include <limits>
 #include <libxml/tree.h>
 #include <libxml/HTMLparser.h>
 #include <libxml++/libxml++.h>
-
 #include <time.h>
-
 #include "parser.h"
-#include "func_list.h"
+#include "get_func_list.h"
+#include "print_func_list.h"
+#include "msc_func_list.h"
 
-enum MainValue { zero, exitt, print, get };
-enum SubValue { base, price, pe };
+enum MainValue { main_base, exitt, print, get };
+enum SubValue { sub_base, price, pe, diff };
 
 static std::map<std::string, MainValue> mapMainVals;
 static std::map<std::string, SubValue> mapSubVals;
@@ -55,7 +53,7 @@ int main() {
 void main_choose(std::vector<std::string> args) {
 
 	switch (mapMainVals[args[0]]) {
-		case zero:
+		case main_base:
 			unknown_func();
 			return;
 
@@ -77,8 +75,12 @@ void main_choose(std::vector<std::string> args) {
 
 void print_choose(std::vector<std::string> args) {
 
+	if(args.size() < 1) {
+		unknown_func();
+	}
+
 	switch(mapSubVals[args[0]]) {
-		case zero:
+		case sub_base:
 			unknown_func();
 			return;
 
@@ -91,10 +93,20 @@ void print_choose(std::vector<std::string> args) {
 			args.erase(args.begin());
 			print_pe(args);
 			return;
+
+		case diff:
+			args.erase(args.begin());
+			print_diff(args);
+			return;
 	}
 }
 
 std::string get_choose(std::vector<std::string> args) {
+	
+	if(args.size() < 1) {
+		unknown_func();
+	}
+
 	std::string ret;
 	return ret;
 }
@@ -108,4 +120,5 @@ void initialize_main_value() {
 void initialize_sub_value() {
 	mapSubVals["price"] = price;
 	mapSubVals["pe"] = pe;
+	mapSubVals["diff"] = diff;
 }

@@ -3,8 +3,9 @@
 #include <vector>
 #include <ctime>
 #include <algorithm>
-
-#include "func_list.h"
+#include <list>
+#include "msc_func_list.h"
+#include "get_func_list.h"
 #include "parser.h"
 
 std::vector<std::string> parse_args(std::string query) {
@@ -40,22 +41,35 @@ bool validate_date(tm* date) {
 	time(&rawtime);
 	curr = localtime(&rawtime);
 
-	std::list<int> thirty = {4, 6, 9, 11};
-	std::list<int> thirty_one = {1, 3, 5, 7, 8, 10, 12};
+	std::list<int> thirty = {3, 5, 8, 10};
+	std::list<int> thirty_one = {0, 2, 4, 6, 7, 9, 11};
 
 	if((std::find(thirty.begin(), thirty.end(), date->tm_mon) != thirty.end() && date->tm_mday > 30) ||
 	   (std::find(thirty_one.begin(), thirty_one.end(), date->tm_mon) != thirty_one.end() && date->tm_mday > 31) ||
-	   (date->tm_mon == 2 && date->tm_mday > 28) ||
-	   (date->tm_mon < 1 || date->tm_mday < 1 || date->tm_year < 1900) || 
-	   (date->tm_mon > 12) ||
-	   (date->tm_mon >= curr->tm_mon && date->tm_mday > curr->tm_mday && date->tm_year >= curr->tm_year + 1900) ||
-	   (date->tm_mon <= 2 && date->tm_mday < 19 && date->tm_year <= 2002)) {
+	   (date->tm_mon == 1 && date->tm_mday > 28) ||
+	   (date->tm_mon < 0 || date->tm_mday < 1 || date->tm_year < 0) || 
+	   (date->tm_mon > 11) ||
+	   (date->tm_mon >= curr->tm_mon && date->tm_mday > curr->tm_mday && date->tm_year >= curr->tm_year) ||
+	   (date->tm_mon <= 1 && date->tm_mday < 19 && date->tm_year <= 102)) {
 		
 		error("in parsing date. Enter valid date MM/DD/YYYY");
 		return 0;
 	}
 
 	return 1;
+}
+
+bool date_compare(tm* date_1, tm* date_2) {
+
+	if(date_1->tm_year <= date_2->tm_year) {
+		if(date_1->tm_mon <= date_2->tm_mon) {
+			if(date_1->tm_mday < date_2->tm_mday) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 tm* parse_date(std::string date) {
@@ -74,9 +88,9 @@ tm* parse_date(std::string date) {
 	ret = new tm();
 
 	if(times.size() == 2) {
-		ret->tm_mon = times[0];
+		ret->tm_mon = times[0] - 1;
 		ret->tm_mday = times[1];
-		ret->tm_year = stoi(date);
+		ret->tm_year = stoi(date) - 1900;
 	} else {
 		error("in parsing date. Enter valid date MM/DD/YYYY");
 		return NULL;
