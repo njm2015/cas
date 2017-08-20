@@ -23,26 +23,23 @@ double get_price(std::string symbol, tm* date) {
 
 	if(week_day == 6 || week_day == 0) {
 		error("in parsing date. Enter weekday (Mon-Fri)");
-		delete date;
 		return -1;
 	}
 
-	std::string day = std::to_string(date->tm_mday);
-	std::string month = std::to_string(date->tm_mon + 1);
-	std::string year = std::to_string(date->tm_year + 1900);
+	long seconds_1 = seconds_since_epoch(date->tm_mday, date->tm_mon, date->tm_year);
+	long seconds_0 = seconds_1 - 86400;
 
-	URL = "http://bigcharts.marketwatch.com/historical/default.asp?symb="
-						+ symbol + "&closeDate=" 
-						+ month + "%2F"
-						+ day + "%2F"
-						+ year;
+	URL = "https://finance.yahoo.com/quote/"
+			+ symbol + "/history?period1="
+			+ std::to_string(seconds_0) + "&period2="
+			+ std::to_string(seconds_1) + "&interval=1d&filter=history&frequency=1d";
 
 	html = get_page(URL);
 
 	xmlDoc* doc = get_tree(html);
 	xmlpp::Element* root = new xmlpp::Element(get_root(doc));
 
-	xpath = "//table[@class=\"historicalquote fatbottomed\"]//tr[3]/td/text()";
+	xpath = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr[1]/td[6]/span/text()";
 
 	auto elements = root->find(xpath);
 	if(elements.size() == 1) {

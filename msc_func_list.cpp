@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
+#include <limits>
+#include <list>
+#include <algorithm>
 #include <libxml/tree.h>
 #include <libxml/HTMLparser.h>
 #include <libxml++/libxml++.h>
@@ -8,6 +11,11 @@
 void usage(std::string func_name) {
 
 	std::cout << "Incorrect usage for " << func_name << ". 'help' for usages." << std::endl;
+}
+
+void error(std::string message) {
+
+	std::cout << "Error in " << message << std::endl;
 }
 
 void unknown_func() {
@@ -23,10 +31,36 @@ int day_of_week(int day, int month, int year) {
 	return (year + year/4 - year/100 + year/400 + t[month-1] + day) % 7;
 }
 
-void error(std::string message) {
+long seconds_since_epoch(int day, int month, int year) {
 
-	std::cout << "Error in " << message << std::endl;
+	if(year < 70) {
+		error("parsing date. please enter date after 1970");
+		return -1;
+	}
+
+	long year_day, mon_day;
+
+	year_day = (year - 70) * 365 + (year-70) / 4 + 1;
+
+	mon_day = 0;
+
+	std::list<int> thirty = {3, 5, 8, 10};
+	std::list<int> thirty_one = {0, 2, 4, 6, 7, 9, 11};
+
+	for(int i = 0; i < month; i++) {
+		if(std::find(thirty_one.begin(), thirty_one.end(), i) != thirty_one.end()) {
+			mon_day += 31;
+		} else if(std::find(thirty.begin(), thirty.end(), i) != thirty.end()) {
+			mon_day += 30;
+		} else {
+			mon_day += 28;
+		}
+	}
+
+	return (year_day + mon_day + day) * 86400;	
 }
+
+
 
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 

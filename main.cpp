@@ -44,7 +44,6 @@ int main() {
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
 		main_choose(parse_args(query));
-
 	}
 
 	return 0;

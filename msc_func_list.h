@@ -5,11 +5,13 @@
 
 void usage(std::string func_name);
 
+void error(std::string message);
+
 void unknown_func();
 
 int day_of_week(int day, int month, int year);
 
-void error(std::string message);
+long seconds_since_epoch(int day, int month, int year);
 
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
