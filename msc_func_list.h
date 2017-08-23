@@ -21,4 +21,6 @@ xmlDoc* get_tree(std::string html_page);
 
 xmlNode* get_root(xmlDoc* tree);
 
+std::vector<std::string> get_xml_element_text(std::string URL, std::string xpath);
+
 #endif

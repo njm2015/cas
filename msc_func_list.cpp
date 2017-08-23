@@ -3,6 +3,7 @@
 #include <curl/curl.h>
 #include <limits>
 #include <list>
+#include <vector>
 #include <algorithm>
 #include <libxml/tree.h>
 #include <libxml/HTMLparser.h>
@@ -103,4 +104,26 @@ xmlDoc* get_tree(std::string html_page) {
 xmlNode* get_root(xmlDoc* tree) {
 
 	return xmlDocGetRootElement(tree);
+}
+
+std::vector<std::string> get_xml_element_text(std::string URL, std::string xpath) {
+
+	std::vector<std::string> ret;
+
+	std::string html = get_page(URL);
+
+	xmlDoc* doc = get_tree(html);
+	xmlpp::Element* root = new xmlpp::Element(get_root(doc));
+
+	auto elements = root->find(xpath);
+	if(elements.size() == 1) {
+		ret.push_back(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content());
+	} else {
+		std::cout << "Invalid symbol" << std::endl;
+	}
+
+	delete root;
+	xmlFreeDoc(doc);
+
+	return ret;
 }

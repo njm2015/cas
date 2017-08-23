@@ -4,33 +4,50 @@
 #include <ctime>
 #include <algorithm>
 #include <list>
+#include <utility>
+#include <sstream>
+#include <iomanip>
+#include <math.h>
 #include "msc_func_list.h"
 #include "get_func_list.h"
 #include "parser.h"
 
-std::vector<std::string> parse_args(std::string query) {
+std::pair<std::vector<std::string>, std::list<std::string>> parse_args(std::string query) {
 
 	std::vector<std::string> args;
+	std::list<std::string> flags;
 
 	std::string curr_string = query;
 
 	if(curr_string.find(' ') == -1) {
-
-		args.push_back(curr_string.substr(0, curr_string.length()));
+		if(curr_string[0] == '-') {
+			flags.push_back(curr_string);
+		} else {
+			args.push_back(curr_string);
+		}
 
 	} else {
 
 		while(curr_string.find(' ') != -1) {
 			size_t next_space = curr_string.find(' ');
-			args.push_back(curr_string.substr(0, next_space));
+
+			if(curr_string[0] == '-') {
+				flags.push_back(curr_string.substr(0, next_space));
+			} else {
+				args.push_back(curr_string.substr(0, next_space));
+			}
 			curr_string = curr_string.substr(next_space + 1);
 		}
 
-		args.push_back(curr_string.substr(0, curr_string.length()));
+		if(curr_string[0] == '-') {
+			flags.push_back(curr_string);
+		} else {
+			args.push_back(curr_string);
+		}
 
 	}
 	
-	return args;
+	return std::make_pair(args, flags);
 }
 
 bool validate_date(tm* date) {
@@ -101,4 +118,68 @@ tm* parse_date(std::string date) {
 	} else {
 		return NULL;
 	}
+}
+
+double large_number_parse(std::string num_string) {
+
+	char suffix;
+	double num_double;
+
+	suffix = num_string[num_string.length()-1];
+
+	num_double = std::stod(num_string);
+
+	if(suffix == 'M') {
+		return num_double * 1000000;
+	}
+
+	if(suffix == 'B') {
+		return num_double * 1000000000;
+	}
+
+	return num_double;
+}
+
+std::string reverse_large_number_parse(double num_double) {
+
+	double epsilon = 0.1;
+	char suffix;
+	std::string num_string;
+	std::stringstream stream;
+
+	if(num_double < 100000) {
+		return std::to_string(num_double);
+	}
+
+	num_double /= 1000000;
+
+	if(num_double < 1000) {
+		suffix = 'M';
+
+		int precision_val;
+
+		for(precision_val = 0; fmod(num_double, pow(10, precision_val * -1)) > epsilon; precision_val++) {
+
+		} 
+
+		stream << std::fixed << std::setprecision(precision_val) << num_double;
+		num_string = stream.str();
+
+		return num_string + suffix;
+	}
+
+	num_double /= 1000;
+
+	suffix = 'B';
+
+	int precision_val;
+
+		for(precision_val = 0; fmod(num_double, pow(10, precision_val * -1)) > epsilon; precision_val++) {
+
+		}
+
+	stream << std::fixed << std::setprecision(precision_val) << num_double;
+	num_string = stream.str();
+
+	return num_string + suffix;
 }
