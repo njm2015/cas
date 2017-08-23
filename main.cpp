@@ -1,33 +1,41 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <exception>
-#include <stdexcept>
 #include <algorithm>
 #include <curl/curl.h>
-
+#include <limits>
+#include <utility>
+#include <list>
+#include <iomanip>
 #include <libxml/tree.h>
 #include <libxml/HTMLparser.h>
 #include <libxml++/libxml++.h>
-
 #include <time.h>
-
 #include "parser.h"
-#include "func_list.h"
+#include "get_func_list.h"
+#include "print_func_list.h"
+#include "msc_func_list.h"
 
-enum StringValue { zero, exitt, getprice };
+enum MainValue { main_base, exitt, print, get };
+enum SubValue { sub_base, price, pe, diff, eps, cap };
 
-static std::map<std::string, StringValue> mapFuncVals;
+static std::map<std::string, MainValue> mapMainVals;
+static std::map<std::string, SubValue> mapSubVals;
 
-void choose(StringValue function, std::vector<std::string> args);
+void main_choose(std::vector<std::string> args);
 
-void initialize();
+void main_choose(std::pair<std::vector<std::string>, std::list<std::string>> query);
+void print_choose(std::vector<std::string> args, std::list<std::string> flags);
+std::string get_choose(std::vector<std::string> args, std::list<std::string> flags);
+void initialize_main_value();
+void initialize_sub_value();
 
 int main() {
 
-	initialize();
+	initialize_main_value();
+	initialize_sub_value();
 
-	std::cout << "Welcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
+	std::cout << "\n\nWelcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
 
 	while(true) {
 		std::string query;
@@ -38,28 +46,93 @@ int main() {
 
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
-		choose(mapFuncVals[parse_func(query)], parse_args(query));
+		main_choose(parse_args(query));
 	}
 
 	return 0;
 }
 
-void choose(StringValue function, std::vector<std::string> args) {
+void main_choose(std::pair<std::vector<std::string>, std::list<std::string>> query) {
 
-	switch (function) {
-		case zero:
+	switch (mapMainVals[query.first[0]]) {
+		case main_base:
 			unknown_func();
 			return;
+
 		case exitt:
 			exit(0);
 			return;
-		case getprice:
-			get_price(args);
+
+		case print:
+			query.first.erase(query.first.begin());
+			print_choose(query.first, query.second);
+			return;
+
+		case get:
+			query.first.erase(query.first.begin());
+			get_choose(query.first, query.second);
 			return;
 	}
 }
 
-void initialize() {
-	mapFuncVals["exit"] = exitt;
-	mapFuncVals["getprice"] = getprice;
+void print_choose(std::vector<std::string> args, std::list<std::string> flags) {
+
+	if(args.size() < 1) {
+		unknown_func();
+	}
+
+	switch(mapSubVals[args[0]]) {
+		case sub_base:
+			unknown_func();
+			return;
+
+		case price:
+			args.erase(args.begin());
+			print_price(args, flags);
+			return;
+
+		case pe:
+			args.erase(args.begin());
+			print_pe(args, flags);
+			return;
+
+		case diff:
+			args.erase(args.begin());
+			print_diff(args, flags);
+			return;
+
+		case eps:
+			args.erase(args.begin());
+			print_eps(args, flags);
+			return;
+
+		case cap:
+			args.erase(args.begin());
+			print_cap(args, flags);
+			return;
+	}
+}
+
+std::string get_choose(std::vector<std::string> args, std::list<std::string> flags) {
+	
+	if(args.size() < 1) {
+		unknown_func();
+	}
+
+	std::string ret;
+	return ret;
+}
+
+void initialize_main_value() {
+	mapMainVals["exit"] = exitt;
+	mapMainVals["print"] = print;
+	mapMainVals["get"] = get;
+}
+
+void initialize_sub_value() {
+	mapSubVals["price"] = price;
+	mapSubVals["pe"] = pe;
+	mapSubVals["diff"] = diff;
+	mapSubVals["eps"] = eps;
+	mapSubVals["cap"] = cap;
 }
