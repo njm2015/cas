@@ -1,3 +1,4 @@
-To do for CAS system:
+Dependencies: 
 
-On branch develop.
+libxml++
+curl
