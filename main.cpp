@@ -16,8 +16,8 @@
 #include "print_func_list.h"
 #include "msc_func_list.h"
 
-enum MainValue { main_base, exitt, print, get };
-enum SubValue { sub_base, price, pe, diff, eps, cap };
+enum MainValue { main_base, exitt, print, get, help };
+enum SubValue { sub_base, price, pe, diff, eps, cap, call, put };
 
 static std::map<std::string, MainValue> mapMainVals;
 static std::map<std::string, SubValue> mapSubVals;
@@ -72,6 +72,10 @@ void main_choose(std::pair<std::vector<std::string>, std::list<std::string>> que
 			query.first.erase(query.first.begin());
 			get_choose(query.first, query.second);
 			return;
+
+		case help:
+			print_help();
+			return;
 	}
 }
 
@@ -98,7 +102,7 @@ void print_choose(std::vector<std::string> args, std::list<std::string> flags) {
 
 		case diff:
 			args.erase(args.begin());
-			print_diff(args, flags);
+			//print_diff(args, flags);
 			return;
 
 		case eps:
@@ -110,6 +114,13 @@ void print_choose(std::vector<std::string> args, std::list<std::string> flags) {
 			args.erase(args.begin());
 			print_cap(args, flags);
 			return;
+
+		case call:
+			print_option(args, flags);
+			return;
+
+		case put:
+			print_option(args, flags);
 	}
 }
 
@@ -127,6 +138,7 @@ void initialize_main_value() {
 	mapMainVals["exit"] = exitt;
 	mapMainVals["print"] = print;
 	mapMainVals["get"] = get;
+	mapMainVals["help"] = help;
 }
 
 void initialize_sub_value() {
@@ -135,4 +147,6 @@ void initialize_sub_value() {
 	mapSubVals["diff"] = diff;
 	mapSubVals["eps"] = eps;
 	mapSubVals["cap"] = cap;
+	mapSubVals["call"] = call;
+	mapSubVals["put"] = put;
 }

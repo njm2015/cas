@@ -1,4 +1,5 @@
 Dependencies: 
 
+make
 libxml++
 curl
