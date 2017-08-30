@@ -12,8 +12,10 @@
 
 price_pair get_price(std::string symbol, tm* date, int day_future) {
 
+	std::cout << __LINE__ << std::endl;
+
 	price_pair ret;
-	std::string URL, html, xpath;
+	std::string URL, html, xpath_date, xpath_price;
 	tm* curr;
 	double day_0, day_1, seconds_0, seconds_1;
 
@@ -24,6 +26,8 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	if(date == NULL) {
 		date = curr;
 	}
+
+	std::cout << __LINE__ << std::endl;
 
 	int week_day = day_of_week(date->tm_mday, date->tm_mon + 1, date->tm_year + 1900);
 
@@ -37,6 +41,8 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
+	day_future += add_to_date_no_weekends(date, day_future);
+
 	day_0 = days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1 + 0.2083;
 	day_1 = day_0 + day_future;
 	seconds_0 = day_0 * 86400;
@@ -46,16 +52,10 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
-	for(int i = 0; i < day_future; i++) {
-		ret.date_arr.push_back(date_to_string(add_to_date(date, i)));
-	}
-
 	URL = "https://finance.yahoo.com/quote/"
 			+ symbol + "/history?period1="
 			+ std::to_string((int)seconds_0) + "&period2="
 			+ std::to_string((int)seconds_1) + "&interval=1d&filter=history&frequency=1d";
-
-	std::cout << URL << std::endl;
 
 	html = get_page(URL);
 
@@ -64,17 +64,26 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 
 	for(int i = 1; i <= day_future + 1; i++) {
 
+		xpath_date = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr["
+						+ std::to_string(i) + "]/td[1]/span/text()";
+		auto elements_date = root->find(xpath_date);
+		if(elements_date.size() == 1) {
+			ret.date_arr.push_back(dynamic_cast<xmlpp::ContentNode*>(elements_date[0])->get_content());
+		} else {
+			break;
+		}
+
 		std::vector<double> temp;
 
 		for(int j = 2; j <= 6; j++) {
 
-			xpath = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr["
+			xpath_price = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr["
 					+ std::to_string(i) + "]/td["
 					+ std::to_string(j) + "]/span/text()";
 
-			auto elements = root->find(xpath);
-			if(elements.size() == 1) {
-				temp.push_back(std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content()));
+			auto elements_price = root->find(xpath_price);
+			if(elements_price.size() == 1) {
+				temp.push_back(std::stod(dynamic_cast<xmlpp::ContentNode*>(elements_price[0])->get_content()));
 			} else {
 				break;
 			}
@@ -84,7 +93,10 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		ret.price_arr.push_back(temp);
 	}
 
-	delete root;
+	if(root) {
+		delete root;
+	}
+
 	xmlFreeDoc(doc);
 
 	return ret;
@@ -110,12 +122,11 @@ std::vector<double> get_pe(std::string symbol) {
 
 	return pe_double;
 }
-/*
+
 std::vector<double> get_diff_price(std::string symbol, tm* date_1, tm* date_2) {
 
-	std::list<std::string> no_val;
-
-	std::vector<double> prices_1, prices_2, ret;
+	price_pair price_1, price_2;
+	std::vector<double> ret;
 
 	if(!date_1 || !date_2) {
 		std::cout << "error in parsing dates. Please enter valid dates MM/DD/YYYY" << std::endl;
@@ -127,21 +138,25 @@ std::vector<double> get_diff_price(std::string symbol, tm* date_1, tm* date_2) {
 		return ret;
 	}
 
-	prices_1 = get_price(symbol, date_1, no_val);
-	prices_2 = get_price(symbol, date_2, no_val);
+	price_1 = get_price(symbol, date_1, 0);
+	price_2 = get_price(symbol, date_2, 0);
 
-	if(prices_1.size() != 0 && prices_2.size() != 0) {
+	if(price_1.price_arr.size() != 0 && price_2.price_arr.size() != 0) {
 
-		double diff = prices_2[3] - prices_1[3];
-		double perc = (diff / prices_1[3]) * 100;
+		std::cout << __LINE__ << std::endl;
+
+		double diff = price_2.price_arr[0][3] - price_1.price_arr[0][3];
+		double perc = (diff / price_1.price_arr[0][3]) * 100;
 		ret.push_back(diff);
 		ret.push_back(perc);
 
-	} 
+	} else {
+		std::cout << "in the else" << std::endl;
+	}
 
 	return ret;
 }
-*/
+
 std::vector<double> get_eps(std::string symbol) {
 
 	std::vector<std::string> eps_string;

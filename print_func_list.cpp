@@ -25,10 +25,16 @@ void print_price(std::vector<std::string> args, std::list<std::string> flags) {
 
 	if(args.size() < 2) {
 		prices = get_price(args[0], NULL, 0);
-	} else if(args.size() < 3) {
-		prices = get_price(args[0], parse_date(args[1]), 0);
-	} else {
-		prices = get_price(args[0], parse_date(args[1]), std::stoi(args[2]));
+	} else { 
+		tm* date = parse_date(args[1]);
+
+		if(args.size() < 3) {
+			prices = get_price(args[0], date, 0);
+		} else {
+			prices = get_price(args[0], date, std::stoi(args[2]));
+		}
+
+		//delete date;
 	}
 
 	print_price_header();
@@ -43,7 +49,7 @@ void print_price(std::vector<std::string> args, std::list<std::string> flags) {
 
 		std::cout << std::endl;
 	}
-	
+
 }
 
 void print_pe(std::vector<std::string> args, std::list<std::string> flags) {
@@ -58,7 +64,7 @@ void print_pe(std::vector<std::string> args, std::list<std::string> flags) {
 		usage("print pe");
 	}
 }
-/*
+
 void print_diff(std::vector<std::string> args, std::list<std::string> flags) {
 
 	std::vector<double> diff;
@@ -92,7 +98,7 @@ void print_diff(std::vector<std::string> args, std::list<std::string> flags) {
 	}
 
 }
-*/
+
 void print_eps(std::vector<std::string> args, std::list<std::string> flags) {
 
 	if(args.size() > 0) {

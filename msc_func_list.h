@@ -85,7 +85,7 @@ bool date_agree(int day, int month);
 * added days
 **/
 
-tm* add_to_date(tm* date, int day);
+int add_to_date_no_weekends(tm* date, int day);
 
 /**
 * Special function only used for constructing the URL for the option

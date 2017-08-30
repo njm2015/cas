@@ -102,7 +102,7 @@ void print_choose(std::vector<std::string> args, std::list<std::string> flags) {
 
 		case diff:
 			args.erase(args.begin());
-			//print_diff(args, flags);
+			print_diff(args, flags);
 			return;
 
 		case eps:

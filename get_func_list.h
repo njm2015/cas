@@ -35,7 +35,7 @@ std::vector<double> get_pe(std::string symbol);
 * dollar difference and the second element being percent difference
 **/
 
-//std::vector<double> get_diff_price(std::string symbol, tm* date_1, tm* date_2);
+std::vector<double> get_diff_price(std::string symbol, tm* date_1, tm* date_2);
 
 /**
 * Gets the EPS for a given stock symbol

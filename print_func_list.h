@@ -24,7 +24,7 @@ void print_pe(std::vector<std::string> args, std::list<std::string> flags);
 * @param flags the vector containing printing flags
 **/
 
-//void print_diff(std::vector<std::string> args, std::list<std::string> flags);
+void print_diff(std::vector<std::string> args, std::list<std::string> flags);
 
 /**
 * Prints the EPS for a certain stock symbol

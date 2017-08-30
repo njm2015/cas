@@ -53,6 +53,7 @@ std::pair<std::vector<std::string>, std::list<std::string>> parse_args(std::stri
 bool validate_date(tm* date) {
 
 	tm* curr;
+	bool ret;
 
 	time_t rawtime;
 	time(&rawtime);
@@ -69,10 +70,14 @@ bool validate_date(tm* date) {
 	   (date->tm_mon <= 1 && date->tm_mday < 19 && date->tm_year <= 102)) {
 		
 		error("in parsing date. Enter valid date MM/DD/YYYY");
-		return 0;
+		ret = 0;
+	} else {
+		ret = 1;
 	}
 
-	return 1;
+	delete curr;
+
+	return ret;
 }
 
 bool date_compare(tm* date_1, tm* date_2, bool equal) {

@@ -126,28 +126,15 @@ bool date_agree(int day, int month) {
 	return (day <= days_in_month(month));
 }
 
-tm* add_to_date(tm* date, int day) {
+int add_to_date_no_weekends(tm* date, int day) {
 
-	tm* ret = new tm();
-
-	ret->tm_mday = date->tm_mday;
-	ret->tm_mon = date->tm_mon;
-	ret->tm_year = date->tm_year;
-
-	ret->tm_mday += day;
-
-	while(!date_agree(ret->tm_mday, ret->tm_mon)) {
-
-		ret->tm_mday -= days_in_month(ret->tm_mon);
-		ret->tm_mon++;
-
-		if(ret->tm_mon > 11) {
-			ret->tm_year++;
-			ret->tm_mon = 0;
-		}
+	int weekend = day / 5;
+	int weekend_mod = day % 5;
+	if(weekend_mod + day_of_week(date->tm_mday, date->tm_mon + 1, date->tm_year + 1900) > 5) {
+		weekend++;
 	}
 
-	return ret;
+	return weekend * 2;
 }
 
 long get_opt_seconds(tm* date) {
