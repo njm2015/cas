@@ -33,7 +33,7 @@ int day_of_week(int day, int month, int year) {
 	return (year + year/4 - year/100 + year/400 + t[month-1] + day) % 7;
 }
 
-long seconds_since_epoch(int day, int month, int year) {
+long days_since_epoch(int day, int month, int year) {
 
 	if(year < 70) {
 		error("parsing date. please enter date after 1970");
@@ -59,7 +59,7 @@ long seconds_since_epoch(int day, int month, int year) {
 		}
 	}
 
-	return (year_day + mon_day + day) * 86400;	
+	return year_day + mon_day + day;	
 }
 
 tm* get_nearest_friday(tm* date) {
@@ -152,7 +152,7 @@ tm* add_to_date(tm* date, int day) {
 
 long get_opt_seconds(tm* date) {
 
-	return seconds_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 86400;
+	return (days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1) * 86400;
 }
 
 std::string date_to_string(tm* date) {

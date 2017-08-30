@@ -31,10 +31,10 @@ void print_price(std::vector<std::string> args, std::list<std::string> flags) {
 
 	print_price_header();
 
-	std::cout << "\t\t" << prices.date_arr[0];
+	std::cout << "\t" << prices.date_arr[0];
 
 	for(int i = 0; i < prices.price_arr[0].size(); i++) {
-		std::cout << prices.price_arr[0][i];
+		std::cout << "\t\t" << prices.price_arr[0][i];
 	}
 
 	std::cout << std::endl;

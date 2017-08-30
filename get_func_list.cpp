@@ -15,6 +15,7 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	price_pair ret;
 	std::string URL, html, xpath;
 	tm* curr;
+	double day_0, day_1, seconds_0, seconds_1;
 
 	time_t rawtime;
 	time(&rawtime);
@@ -36,10 +37,15 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
-	long seconds_0 = seconds_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 86400;
-	long seconds_1 = seconds_0 + (day_future * 86400) + 86400;
+	day_0 = days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1 + 0.2083;
+	day_1 = day_0 + day_future + 1;
+	seconds_0 = day_0 * 86400;
+	seconds_1 = day_1 * 86400;
 
-	if(seconds_1 == -1) {
+	std::cout << "[day_0]: " << day_0 << std::endl;
+	std::cout << "[day_1]: " << day_1 << std::endl;
+
+	if(day_0 == -1) {
 		return ret;
 	}
 
@@ -47,8 +53,8 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 
 	URL = "https://finance.yahoo.com/quote/"
 			+ symbol + "/history?period1="
-			+ std::to_string(seconds_0) + "&period2="
-			+ std::to_string(seconds_1) + "&interval=1d&filter=history&frequency=1d";
+			+ std::to_string((int)seconds_0) + "&period2="
+			+ std::to_string((int)seconds_1) + "&interval=1d&filter=history&frequency=1d";
 
 	std::cout << URL << std::endl;
 

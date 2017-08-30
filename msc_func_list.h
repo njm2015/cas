@@ -47,7 +47,7 @@ int day_of_week(int day, int month, int year);
 * @return The number of seconds since Jan 1, 1970 to date
 **/
 
-long seconds_since_epoch(int day, int month, int year);
+long days_since_epoch(int day, int month, int year);
 
 /**
 * Calculates the first friday on or after the given date.
