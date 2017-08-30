@@ -28,3 +28,4 @@ print_func_list.o: print_func_list.cpp print_func_list.h
 
 clean:
 	rm *.o main
+

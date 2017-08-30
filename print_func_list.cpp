@@ -25,19 +25,24 @@ void print_price(std::vector<std::string> args, std::list<std::string> flags) {
 
 	if(args.size() < 2) {
 		prices = get_price(args[0], NULL, 0);
-	} else {
+	} else if(args.size() < 3) {
 		prices = get_price(args[0], parse_date(args[1]), 0);
+	} else {
+		prices = get_price(args[0], parse_date(args[1]), std::stoi(args[2]));
 	}
 
 	print_price_header();
 
-	std::cout << "\t" << prices.date_arr[0];
+	for(int i = 0; i < prices.price_arr.size(); i++) {
 
-	for(int i = 0; i < prices.price_arr[0].size(); i++) {
-		std::cout << "\t\t" << prices.price_arr[0][i];
+		std::cout << "\t" << prices.date_arr[i];
+
+		for(int j = 0; j < prices.price_arr[i].size(); j++) {
+			std::cout << "\t\t" << prices.price_arr[i][j];
+		}
+
+		std::cout << std::endl;
 	}
-
-	std::cout << std::endl;
 	
 }
 

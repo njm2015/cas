@@ -38,18 +38,17 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	}
 
 	day_0 = days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1 + 0.2083;
-	day_1 = day_0 + day_future + 1;
+	day_1 = day_0 + day_future;
 	seconds_0 = day_0 * 86400;
 	seconds_1 = day_1 * 86400;
-
-	std::cout << "[day_0]: " << day_0 << std::endl;
-	std::cout << "[day_1]: " << day_1 << std::endl;
 
 	if(day_0 == -1) {
 		return ret;
 	}
 
-	ret.date_arr.push_back(date_to_string(date));
+	for(int i = 0; i < day_future; i++) {
+		ret.date_arr.push_back(date_to_string(add_to_date(date, i)));
+	}
 
 	URL = "https://finance.yahoo.com/quote/"
 			+ symbol + "/history?period1="
@@ -63,32 +62,30 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	xmlDoc* doc = get_tree(html);
 	xmlpp::Element* root = new xmlpp::Element(get_root(doc));
 
-	std::vector<double> temp;
+	for(int i = 1; i <= day_future + 1; i++) {
 
-	std::cout << __LINE__ << std::endl;
+		std::vector<double> temp;
 
-	for(int i = 2; i <= 6; i++) {
+		for(int j = 2; j <= 6; j++) {
 
-		xpath = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr[1]/td["
-				 + std::to_string(i) + "]/span/text()";
+			xpath = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr["
+					+ std::to_string(i) + "]/td["
+					+ std::to_string(j) + "]/span/text()";
 
-		auto elements = root->find(xpath);
-		if(elements.size() == 1) {
-			temp.push_back(std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content()));
-		} else {
-			std::cout << "Invalid symbol" << std::endl;
-			delete root;
-			return ret;
+			auto elements = root->find(xpath);
+			if(elements.size() == 1) {
+				temp.push_back(std::stod(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content()));
+			} else {
+				break;
+			}
+
 		}
 
+		ret.price_arr.push_back(temp);
 	}
-	
-	ret.price_arr.push_back(temp);
 
 	delete root;
 	xmlFreeDoc(doc);
-
-	std::cout << "[example]: " << ret.price_arr[0][0] << std::endl;
 
 	return ret;
 }
