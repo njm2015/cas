@@ -252,6 +252,9 @@ std::string get_page(std::string URL) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 		res = curl_easy_perform(curl);
+
+		std::cout << res << std::endl;
+
 		curl_easy_cleanup(curl);
 
 		return readBuffer;

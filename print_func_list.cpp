@@ -21,21 +21,31 @@ void print_price_header() {
 
 void print_price(std::vector<std::string> args, std::list<std::string> flags) {
 
+	std::cout << __LINE__ << std::endl;	
+
 	price_pair prices;
 
 	if(args.size() < 2) {
 		prices = get_price(args[0], NULL, 0);
 	} else { 
+
 		tm* date = parse_date(args[1]);
 
+		//delete date;
+
 		if(args.size() < 3) {
-			prices = get_price(args[0], date, 0);
+			prices = get_price(args[0], NULL, 0);
 		} else {
-			prices = get_price(args[0], date, std::stoi(args[2]));
+			prices = get_price(args[0], NULL, std::stoi(args[2]));
 		}
 
+		std::cout << __FILE__ << __LINE__ << std::endl;
+
 		//delete date;
+	
 	}
+
+/*
 
 	print_price_header();
 
@@ -49,7 +59,7 @@ void print_price(std::vector<std::string> args, std::list<std::string> flags) {
 
 		std::cout << std::endl;
 	}
-
+*/
 }
 
 void print_pe(std::vector<std::string> args, std::list<std::string> flags) {

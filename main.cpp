@@ -38,6 +38,7 @@ int main() {
 	std::cout << "\n\nWelcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
 
 	while(true) {
+		/*
 		std::string query;
 		std::cout << std::endl << ">> ";
 		std::getline(std::cin, query);
@@ -47,6 +48,11 @@ int main() {
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
 		main_choose(parse_args(query));
+		*/
+
+		tm* date = parse_date("8/29/2017");
+
+		delete date;
 	}
 
 	return 0;

@@ -15,6 +15,8 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	std::cout << __LINE__ << std::endl;
 
 	price_pair ret;
+
+	/*
 	std::string URL, html, xpath_date, xpath_price;
 	tm* curr;
 	double day_0, day_1, seconds_0, seconds_1;
@@ -36,15 +38,23 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
+	std::cout << __LINE__ << std::endl;
+
 	if(!date_compare(date, curr, true)) {
 		error("in parsing date. Please enter dates in chronological order.");
 		return ret;
 	}
 
+	std::cout << __LINE__ << std::endl;
+
 	day_future += add_to_date_no_weekends(date, day_future);
 
-	day_0 = days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1 + 0.2083;
-	day_1 = day_0 + day_future;
+	std::cout << __LINE__ << std::endl;
+
+
+
+	day_0 = days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1 + 0.20833;
+	day_1 = day_0 + day_future + 1;
 	seconds_0 = day_0 * 86400;
 	seconds_1 = day_1 * 86400;
 
@@ -52,20 +62,34 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
+	std::cout << __LINE__ << std::endl;
+
 	URL = "https://finance.yahoo.com/quote/"
 			+ symbol + "/history?period1="
 			+ std::to_string((int)seconds_0) + "&period2="
 			+ std::to_string((int)seconds_1) + "&interval=1d&filter=history&frequency=1d";
 
+	std::cout << URL << std::endl;
+*/
+	/*
+
 	html = get_page(URL);
 
+	std::cout << __LINE__ << std::endl;
+
 	xmlDoc* doc = get_tree(html);
+
+	std::cout << __LINE__ << std::endl;
+
 	xmlpp::Element* root = new xmlpp::Element(get_root(doc));
+
+	std::cout << __LINE__ << std::endl;
 
 	for(int i = 1; i <= day_future + 1; i++) {
 
-		xpath_date = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr["
+		xpath_date = "//table[@data-test=\"historical-prices\"]/tbody/tr["
 						+ std::to_string(i) + "]/td[1]/span/text()";
+
 		auto elements_date = root->find(xpath_date);
 		if(elements_date.size() == 1) {
 			ret.date_arr.push_back(dynamic_cast<xmlpp::ContentNode*>(elements_date[0])->get_content());
@@ -77,9 +101,9 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 
 		for(int j = 2; j <= 6; j++) {
 
-			xpath_price = "//section[@id=\"quote-leaf-comp\"]//section/div[2]/table/tbody/tr["
-					+ std::to_string(i) + "]/td["
-					+ std::to_string(j) + "]/span/text()";
+			xpath_price = "//table[@data-test=\"historical-prices\"]/tbody/tr["
+							+ std::to_string(i) + "]/td["
+							+ std::to_string(j) + "]/span/text()";
 
 			auto elements_price = root->find(xpath_price);
 			if(elements_price.size() == 1) {
@@ -93,12 +117,13 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		ret.price_arr.push_back(temp);
 	}
 
-	if(root) {
-		delete root;
-	}
+	
+	std::cout << __FILE__ << " " << __LINE__ << std::endl;
+	delete root;
+	
 
 	xmlFreeDoc(doc);
-
+*/
 	return ret;
 }
 
@@ -153,6 +178,8 @@ std::vector<double> get_diff_price(std::string symbol, tm* date_1, tm* date_2) {
 	} else {
 		std::cout << "in the else" << std::endl;
 	}
+
+	std::cout << __LINE__ << std::endl;
 
 	return ret;
 }
