@@ -253,8 +253,6 @@ std::string get_page(std::string URL) {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 		res = curl_easy_perform(curl);
 
-		std::cout << res << std::endl;
-
 		curl_easy_cleanup(curl);
 
 		return readBuffer;
@@ -289,6 +287,7 @@ std::vector<std::string> get_xml_element_text(std::string URL, std::string xpath
 	auto elements = root->find(xpath);
 	if(elements.size() == 1) {
 		ret.push_back(dynamic_cast<xmlpp::ContentNode*>(elements[0])->get_content());
+		delete elements[0];
 	} else {
 		std::cout << "Invalid symbol" << std::endl;
 	}

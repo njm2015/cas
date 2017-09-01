@@ -37,8 +37,10 @@ int main() {
 
 	std::cout << "\n\nWelcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
 
-	while(true) {
-		/*
+	int i = 0;
+
+	while(i++ < 4) {
+		
 		std::string query;
 		std::cout << std::endl << ">> ";
 		std::getline(std::cin, query);
@@ -48,11 +50,18 @@ int main() {
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
 		main_choose(parse_args(query));
-		*/
+		
+/*
+		std::vector<std::string> args;
+		std::list<std::string> flags;
+		args.push_back("call");
+		args.push_back("aapl");
+		args.push_back("9/22/2017");
+		args.push_back("150");
+		
+		print_option(args, flags);
 
-		tm* date = parse_date("8/29/2017");
-
-		delete date;
+*/
 	}
 
 	return 0;

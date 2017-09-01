@@ -75,8 +75,6 @@ bool validate_date(tm* date) {
 		ret = 1;
 	}
 
-	delete curr;
-
 	return ret;
 }
 
@@ -130,14 +128,15 @@ tm* parse_date(std::string date) {
 		ret->tm_year = stoi(date) - 1900;
 	} else {
 		error("in parsing date. Enter valid date MM/DD/YYYY");
-		//delete ret;
+		delete ret;
 		return NULL;
 	}
+
 
 	if(validate_date(ret)) {
 		return ret;
 	} else {
-		//delete ret;
+		delete ret;
 		return NULL;
 	}
 }
