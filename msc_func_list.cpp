@@ -134,6 +134,17 @@ int add_to_date_no_weekends(tm* date, int day) {
 		weekend++;
 	}
 
+	date->tm_mday += (day + (weekend * 2));
+	while(date->tm_mday > days_in_month(date->tm_mon)) {
+		date->tm_mday -= days_in_month(date->tm_mon);
+		date->tm_mon++;
+		
+		if(date->tm_mon > 11) {
+			date->tm_year++;
+			date->tm_mon = 0;
+		}
+	}
+
 	return weekend * 2;
 }
 
@@ -185,7 +196,45 @@ std::string date_to_string(tm* date) {
 			break;
 	}
 
-	return month + " " + std::to_string(date->tm_mday) + " " + std::to_string(date->tm_year + 1900);
+	return month + " " + std::to_string(date->tm_mday) + ", " + std::to_string(date->tm_year + 1900);
+}
+
+std::string modify_date_format(std::string date) {
+
+	static std::map<std::string, int> mapMonth;
+
+	mapMonth["jan"] = 1;
+	mapMonth["feb"] = 2;
+	mapMonth["mar"] = 3;
+	mapMonth["apr"] = 4;
+	mapMonth["may"] = 5;
+	mapMonth["jun"] = 6;
+	mapMonth["jul"] = 7;
+	mapMonth["aug"] = 8;
+	mapMonth["sep"] = 9;
+	mapMonth["oct"] = 10;
+	mapMonth["nov"] = 11;
+	mapMonth["dec"] = 12;
+
+	std::transform(date.begin(), date.end(), date.begin(), ::tolower);
+	std::vector<std::string> date_list;
+
+	for(int i = 0; i < 2; i++) {
+		size_t space = date.find(" ");
+		date_list.push_back(date.substr(0,space));
+		date = date.substr(space+1);
+	}
+	date_list.push_back(date);
+
+	int day, year;
+	day = std::stoi(date_list[1]);
+	year = std::stoi(date_list[2]);
+
+	std::string ret = std::to_string(mapMonth[date_list[0]]) + std::string("/")
+					+ std::to_string(day) + std::string("/")
+					+ std::to_string(year);
+
+	return ret;
 }
 
 tm* string_to_date(std::vector<std::string> dates) {

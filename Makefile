@@ -4,7 +4,7 @@ CXXFLAGS = -Wall -g -pg `xml2-config --cflags --libs` `pkg-config libxml++-2.6 -
 
 LDFLAGS = -lcurl `pkg-config libxml++-2.6 --cflags --libs`
 
-OBJECTS = main.o parser.o msc_func_list.o get_func_list.o print_func_list.o 
+OBJECTS = main.o parser.o msc_func_list.o get_func_list.o print_func_list.o write.o
 
 main: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o main $(LDFLAGS)
@@ -24,7 +24,8 @@ get_func_list.o: get_func_list.cpp get_func_list.h
 print_func_list.o: print_func_list.cpp print_func_list.h
 	$(CXX) $(CXXFLAGS) -c print_func_list.cpp
 
-
+write.o: write.cpp write.h
+	$(CXX) $(CXXFLAGS) -c write.cpp
 
 clean:
 	rm *.o main

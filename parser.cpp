@@ -66,8 +66,7 @@ bool validate_date(tm* date) {
 	   (std::find(thirty_one.begin(), thirty_one.end(), date->tm_mon) != thirty_one.end() && date->tm_mday > 31) ||
 	   (date->tm_mon == 1 && date->tm_mday > 28) ||
 	   (date->tm_mon < 0 || date->tm_mday < 1 || date->tm_year < 0) || 
-	   (date->tm_mon > 11) ||
-	   (date->tm_mon <= 1 && date->tm_mday < 19 && date->tm_year <= 102)) {
+	   (date->tm_mon > 11)) {
 		
 		error("in parsing date. Enter valid date MM/DD/YYYY");
 		ret = 0;

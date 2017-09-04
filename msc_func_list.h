@@ -94,6 +94,8 @@ int add_to_date_no_weekends(tm* date, int day);
 
 long get_opt_seconds(tm* date);
 
+std::string modify_date_format(std::string date);
+
 /**
 * Converts date into a readable format
 * @param date The date to be converted

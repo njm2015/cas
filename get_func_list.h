@@ -4,6 +4,7 @@
 struct price_pair {
 	std::vector<std::vector<double>> price_arr;
 	std::vector<std::string> date_arr;
+	int day, month, year;
 };
 
 /**

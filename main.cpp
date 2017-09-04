@@ -15,6 +15,7 @@
 #include "get_func_list.h"
 #include "print_func_list.h"
 #include "msc_func_list.h"
+#include "write.h"
 
 enum MainValue { main_base, exitt, print, get, help };
 enum SubValue { sub_base, price, pe, diff, eps, cap, call, put };
@@ -32,14 +33,11 @@ void initialize_sub_value();
 
 int main() {
 
+/*
 	initialize_main_value();
 	initialize_sub_value();
 
-	std::cout << "\n\nWelcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
-
-	int i = 0;
-
-	while(i++ < 4) {
+	while(true) {
 		
 		std::string query;
 		std::cout << std::endl << ">> ";
@@ -51,18 +49,9 @@ int main() {
 
 		main_choose(parse_args(query));
 		
-/*
-		std::vector<std::string> args;
-		std::list<std::string> flags;
-		args.push_back("call");
-		args.push_back("aapl");
-		args.push_back("9/22/2017");
-		args.push_back("150");
-		
-		print_option(args, flags);
-
-*/
 	}
+*/
+	write_to_csv("aapl");
 
 	return 0;
 }

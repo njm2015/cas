@@ -18,6 +18,7 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	std::string URL, html, xpath_date, xpath_price;
 	tm* curr;
 	double day_0, day_1, seconds_0, seconds_1;
+	bool exit;
 
 	time_t rawtime;
 	time(&rawtime);
@@ -29,9 +30,10 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 
 	int week_day = day_of_week(date->tm_mday, date->tm_mon + 1, date->tm_year + 1900);
 
-	if(week_day == 6 || week_day == 0) {
-		error("in parsing date. Enter weekday (Mon-Fri)");
-		return ret;
+	if(week_day == 6) {
+		date->tm_mday += 2;
+	} else if(week_day == 0) {
+		date->tm_mday++;
 	}
 
 	if(!date_compare(date, curr, true)) {
@@ -39,12 +41,22 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
-	day_future += add_to_date_no_weekends(date, day_future);
+	tm* temp_date = new tm();
+	temp_date->tm_mday = date->tm_mday;
+	temp_date->tm_mon = date->tm_mon;
+	temp_date->tm_year = date->tm_year;
+
+	day_future += add_to_date_no_weekends(temp_date, day_future);
 
 	day_0 = days_since_epoch(date->tm_mday, date->tm_mon, date->tm_year) - 1 + 0.20833;
 	day_1 = (date_compare(date, curr, true) && date_compare(curr, date, true)) ? day_0 + day_future + 1 : day_0 + day_future;
 	seconds_0 = day_0 * 86400;
 	seconds_1 = day_1 * 86400;
+
+	ret.day = temp_date->tm_mday;
+	ret.month = temp_date->tm_mon;
+	ret.year = temp_date->tm_year;
+	delete temp_date;
 
 	if(day_0 == -1) {
 		return ret;
@@ -55,6 +67,8 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 			+ std::to_string((int)seconds_0) + "&period2="
 			+ std::to_string((int)seconds_1) + "&interval=1d&filter=history&frequency=1d";
 
+	std::cout << URL << std::endl;
+
 	html = get_page(URL);
 
 	xmlDoc* doc = get_tree(html);
@@ -64,6 +78,8 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 	xmlpp::Element* root = new xmlpp::Element(temp_node);
 	
 	for(int i = 1; i <= day_future + 1; i++) {
+
+		exit = false;
 
 		xpath_date = "//table[@data-test=\"historical-prices\"]/tbody/tr["
 						+ std::to_string(i) + "]/td[1]/span/text()";
@@ -77,6 +93,7 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 			break;
 		}
 
+
 		std::vector<double> temp;
 
 		for(int j = 2; j <= 6; j++) {
@@ -87,23 +104,34 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 
 			auto elements_price = root->find(xpath_price);
 			if(elements_price.size() == 1) {
-				temp.push_back(std::stod(dynamic_cast<xmlpp::ContentNode*>(elements_price[0])->get_content()));
-				delete elements_price[0];
+				if(dynamic_cast<xmlpp::ContentNode*>(elements_price[0])->get_content() == "Stock Split" ||
+					dynamic_cast<xmlpp::ContentNode*>(elements_price[0])->get_content() == "Dividend") {
+					delete elements_price[0];
+					ret.date_arr.pop_back();
+					exit = true;
+					break;
+				} else {
+					temp.push_back(std::stod(dynamic_cast<xmlpp::ContentNode*>(elements_price[0])->get_content()));
+					delete elements_price[0];
+				}
 			} else {
 				break;
 			}
 
 		}
-
-		ret.price_arr.push_back(temp);
+		if(!exit) {
+			ret.price_arr.push_back(temp);
+		}
 		
 	}
 
+	
 	xmlCleanupParser();
 
-	delete root;	
+	delete root;
 
 	xmlFreeDoc(doc);
+
 	return ret;
 }
 

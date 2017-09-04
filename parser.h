@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-
+#include <list>
 
 /**
 * A function to push a space separated query into vectors.
