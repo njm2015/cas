@@ -17,17 +17,15 @@
 #include "msc_func_list.h"
 #include "write.h"
 
-enum MainValue { main_base, exitt, print, get, help };
-enum SubValue { sub_base, price, pe, diff, eps, cap, call, put };
+enum MainValue { MAIN_BASE, EXITT, PRINT, GET, HELP };
+enum SubValue { SUB_BASE, PRICE, PE, DIFF, EPS, CAP, CALL, PUT };
 
 static std::map<std::string, MainValue> mapMainVals;
 static std::map<std::string, SubValue> mapSubVals;
 
-void main_choose(std::vector<std::string> args);
-
 void main_choose(std::pair<std::vector<std::string>, std::list<std::string>> query);
 void print_choose(std::vector<std::string> args, std::list<std::string> flags);
-std::string get_choose(std::vector<std::string> args, std::list<std::string> flags);
+
 void initialize_main_value();
 void initialize_sub_value();
 
@@ -51,7 +49,7 @@ int main() {
 		
 	}
 */
-	write_to_csv("aapl");
+	write_companies(2937, parse_date("1/1/2000"));
 
 	return 0;
 }
@@ -59,25 +57,20 @@ int main() {
 void main_choose(std::pair<std::vector<std::string>, std::list<std::string>> query) {
 
 	switch (mapMainVals[query.first[0]]) {
-		case main_base:
+		case MAIN_BASE:
 			unknown_func();
 			return;
 
-		case exitt:
+		case EXITT:
 			exit(0);
 			return;
 
-		case print:
+		case PRINT:
 			query.first.erase(query.first.begin());
 			print_choose(query.first, query.second);
 			return;
 
-		case get:
-			query.first.erase(query.first.begin());
-			get_choose(query.first, query.second);
-			return;
-
-		case help:
+		case HELP:
 			print_help();
 			return;
 	}
@@ -90,67 +83,57 @@ void print_choose(std::vector<std::string> args, std::list<std::string> flags) {
 	}
 
 	switch(mapSubVals[args[0]]) {
-		case sub_base:
+		case SUB_BASE:
 			unknown_func();
 			return;
 
-		case price:
+		case PRICE:
 			args.erase(args.begin());
 			print_price(args, flags);
 			return;
 
-		case pe:
+		case PE:
 			args.erase(args.begin());
 			print_pe(args, flags);
 			return;
 
-		case diff:
+		case DIFF:
 			args.erase(args.begin());
 			print_diff(args, flags);
 			return;
 
-		case eps:
+		case EPS:
 			args.erase(args.begin());
 			print_eps(args, flags);
 			return;
 
-		case cap:
+		case CAP:
 			args.erase(args.begin());
 			print_cap(args, flags);
 			return;
 
-		case call:
+		case CALL:
 			print_option(args, flags);
 			return;
 
-		case put:
+		case PUT:
 			print_option(args, flags);
 	}
 }
 
-std::string get_choose(std::vector<std::string> args, std::list<std::string> flags) {
-	
-	if(args.size() < 1) {
-		unknown_func();
-	}
-
-	std::string ret;
-	return ret;
-}
-
 void initialize_main_value() {
-	mapMainVals["exit"] = exitt;
-	mapMainVals["print"] = print;
-	mapMainVals["get"] = get;
-	mapMainVals["help"] = help;
+	mapMainVals["exit"] = EXITT;
+	mapMainVals["print"] = PRINT;
+	mapMainVals["get"] = GET;
+	mapMainVals["help"] = HELP;
 }
 
 void initialize_sub_value() {
-	mapSubVals["price"] = price;
-	mapSubVals["pe"] = pe;
-	mapSubVals["diff"] = diff;
-	mapSubVals["eps"] = eps;
-	mapSubVals["cap"] = cap;
-	mapSubVals["call"] = call;
-	mapSubVals["put"] = put;
+	mapSubVals["price"] = PRICE;
+	mapSubVals["pe"] = PE;
+	mapSubVals["diff"] = DIFF;
+	mapSubVals["eps"] = EPS;
+	mapSubVals["cap"] = CAP;
+	mapSubVals["call"] = CALL;
+	mapSubVals["put"] = PUT;
 }

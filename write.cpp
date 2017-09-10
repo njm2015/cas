@@ -8,7 +8,7 @@
 
 void write_to_csv(std::string symbol) {
 
-	std::string filename = std::string("../database/") + symbol + std::string(".csv");
+	std::string filename = std::string("/Volumes/Nathaniel/") + symbol + std::string(".csv");
 
 	std::ofstream file;
 	file.open(filename, std::ios::out);
@@ -54,9 +54,27 @@ void write_to_csv(std::string symbol) {
 
 	file.close();
 }
-/*
-void write_companies() {
 
-	std::string filename = ""
+void write_companies(int skip) {
+
+	std::string filename = "nasdaq_list.csv";
+
+	std::ifstream file (filename);
+
+	std::string line, symbol;
+
+	std::getline(file, line);
+
+	while(skip > 2) {
+		std::getline(file, line);
+		skip--;
+	}
+
+	while(file.good()) {
+		std::getline(file, line);
+		std::cout << line << std::endl;
+		symbol = line.substr(0, line.find(','));
+		write_to_csv(symbol);
+	}
+	file.close();
 }
-*/
