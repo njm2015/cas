@@ -15,9 +15,10 @@
 #include "get_func_list.h"
 #include "print_func_list.h"
 #include "msc_func_list.h"
+#include "write.h"
 
-enum MainValue { main_base, exitt, print, get };
-enum SubValue { sub_base, price, pe, diff, eps, cap };
+enum MainValue { main_base, exitt, print, get, help };
+enum SubValue { sub_base, price, pe, diff, eps, cap, call, put };
 
 static std::map<std::string, MainValue> mapMainVals;
 static std::map<std::string, SubValue> mapSubVals;
@@ -32,12 +33,12 @@ void initialize_sub_value();
 
 int main() {
 
+/*
 	initialize_main_value();
 	initialize_sub_value();
 
-	std::cout << "\n\nWelcome to Command CAS terminal. exit() to end program\n\n" << std::endl;
-
 	while(true) {
+		
 		std::string query;
 		std::cout << std::endl << ">> ";
 		std::getline(std::cin, query);
@@ -47,7 +48,10 @@ int main() {
 		std::transform(query.begin(), query.end(), query.begin(), ::tolower);
 
 		main_choose(parse_args(query));
+		
 	}
+*/
+	write_to_csv("aapl");
 
 	return 0;
 }
@@ -71,6 +75,10 @@ void main_choose(std::pair<std::vector<std::string>, std::list<std::string>> que
 		case get:
 			query.first.erase(query.first.begin());
 			get_choose(query.first, query.second);
+			return;
+
+		case help:
+			print_help();
 			return;
 	}
 }
@@ -110,6 +118,13 @@ void print_choose(std::vector<std::string> args, std::list<std::string> flags) {
 			args.erase(args.begin());
 			print_cap(args, flags);
 			return;
+
+		case call:
+			print_option(args, flags);
+			return;
+
+		case put:
+			print_option(args, flags);
 	}
 }
 
@@ -127,6 +142,7 @@ void initialize_main_value() {
 	mapMainVals["exit"] = exitt;
 	mapMainVals["print"] = print;
 	mapMainVals["get"] = get;
+	mapMainVals["help"] = help;
 }
 
 void initialize_sub_value() {
@@ -135,4 +151,6 @@ void initialize_sub_value() {
 	mapSubVals["diff"] = diff;
 	mapSubVals["eps"] = eps;
 	mapSubVals["cap"] = cap;
+	mapSubVals["call"] = call;
+	mapSubVals["put"] = put;
 }

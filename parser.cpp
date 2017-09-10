@@ -53,6 +53,7 @@ std::pair<std::vector<std::string>, std::list<std::string>> parse_args(std::stri
 bool validate_date(tm* date) {
 
 	tm* curr;
+	bool ret;
 
 	time_t rawtime;
 	time(&rawtime);
@@ -65,23 +66,41 @@ bool validate_date(tm* date) {
 	   (std::find(thirty_one.begin(), thirty_one.end(), date->tm_mon) != thirty_one.end() && date->tm_mday > 31) ||
 	   (date->tm_mon == 1 && date->tm_mday > 28) ||
 	   (date->tm_mon < 0 || date->tm_mday < 1 || date->tm_year < 0) || 
-	   (date->tm_mon > 11) ||
-	   (date->tm_mon >= curr->tm_mon && date->tm_mday > curr->tm_mday && date->tm_year >= curr->tm_year) ||
-	   (date->tm_mon <= 1 && date->tm_mday < 19 && date->tm_year <= 102)) {
+	   (date->tm_mon > 11)) {
 		
 		error("in parsing date. Enter valid date MM/DD/YYYY");
-		return 0;
+		ret = 0;
+	} else {
+		ret = 1;
 	}
 
-	return 1;
+	return ret;
 }
 
-bool date_compare(tm* date_1, tm* date_2) {
+bool date_compare(tm* date_1, tm* date_2, bool equal) {
 
-	if(date_1->tm_year <= date_2->tm_year) {
-		if(date_1->tm_mon <= date_2->tm_mon) {
-			if(date_1->tm_mday < date_2->tm_mday) {
-				return true;
+	if(date_1->tm_year < date_2->tm_year) {
+		return true;
+	} else if(date_1->tm_year > date_2->tm_year) {
+		return false;
+	} else {
+		if(date_1->tm_mon < date_2->tm_mon) {
+			return true;
+		} else if(date_1->tm_mon > date_2->tm_mon) {
+			return false;
+		} else {
+			if(equal) {
+				if(date_1->tm_mday <= date_2->tm_mday) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				if(date_1->tm_mday < date_2->tm_mday) {
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 	}
@@ -91,7 +110,7 @@ bool date_compare(tm* date_1, tm* date_2) {
 
 tm* parse_date(std::string date) {
 
-	tm* ret;
+	tm* ret = new tm();
 
 	size_t slash = date.find('/');
 	std::vector<int> times;
@@ -102,20 +121,21 @@ tm* parse_date(std::string date) {
 		slash = date.find('/');
 	}
 
-	ret = new tm();
-
 	if(times.size() == 2) {
 		ret->tm_mon = times[0] - 1;
 		ret->tm_mday = times[1];
 		ret->tm_year = stoi(date) - 1900;
 	} else {
 		error("in parsing date. Enter valid date MM/DD/YYYY");
+		delete ret;
 		return NULL;
 	}
+
 
 	if(validate_date(ret)) {
 		return ret;
 	} else {
+		delete ret;
 		return NULL;
 	}
 }
@@ -156,13 +176,7 @@ std::string reverse_large_number_parse(double num_double) {
 	if(num_double < 1000) {
 		suffix = 'M';
 
-		int precision_val;
-
-		for(precision_val = 0; fmod(num_double, pow(10, precision_val * -1)) > epsilon; precision_val++) {
-
-		} 
-
-		stream << std::fixed << std::setprecision(precision_val) << num_double;
+		stream << std::fixed << std::setprecision(get_precision(num_double, epsilon)) << num_double;
 		num_string = stream.str();
 
 		return num_string + suffix;
@@ -172,14 +186,40 @@ std::string reverse_large_number_parse(double num_double) {
 
 	suffix = 'B';
 
-	int precision_val;
-
-		for(precision_val = 0; fmod(num_double, pow(10, precision_val * -1)) > epsilon; precision_val++) {
-
-		}
-
-	stream << std::fixed << std::setprecision(precision_val) << num_double;
+	stream << std::fixed << std::setprecision(get_precision(num_double, epsilon)) << num_double;
 	num_string = stream.str();
 
 	return num_string + suffix;
+}
+
+int get_precision(double num, double epsilon) {
+
+	int precision_val;
+
+	for(precision_val = 0; fmod(num, pow(10, precision_val * -1)) > epsilon; precision_val++) {
+
+	}
+
+	return precision_val + 1;
+}
+
+tm* parse_string_date(std::string date_string) {
+
+	std::vector<std::string> ret;
+
+	size_t first_space = date_string.find(' ');
+
+	ret.push_back(date_string.substr(0, first_space));
+
+	date_string = date_string.substr(first_space + 1);
+
+	size_t comma = date_string.find(',');
+
+	ret.push_back(date_string.substr(0, comma));
+
+	date_string = date_string.substr(comma + 2);
+
+	ret.push_back(date_string);
+
+	return string_to_date(ret);
 }
