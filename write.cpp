@@ -6,7 +6,7 @@
 #include "msc_func_list.h"
 #include "parser.h"
 
-void write_to_csv(std::string symbol) {
+void write_to_csv(std::string symbol, std::string date_string) {
 
 	std::string filename = std::string("/Volumes/Nathaniel/") + symbol + std::string(".csv");
 
@@ -17,7 +17,7 @@ void write_to_csv(std::string symbol) {
 	time(&rawtime);
 	tm* curr = localtime(&rawtime);
 
-	tm* date = parse_date("1/1/2000");
+	tm *date = parse_date(date_string);
 
 	while(date_compare(date, curr, true)) {
 		std::cout << date_to_string(date) << std::endl;
@@ -55,9 +55,9 @@ void write_to_csv(std::string symbol) {
 	file.close();
 }
 
-void write_companies(int skip) {
+void write_companies(int skip, std::string date_string, std::string source) {
 
-	std::string filename = "nasdaq_list.csv";
+	std::string filename = source;
 
 	std::ifstream file (filename);
 
@@ -74,7 +74,9 @@ void write_companies(int skip) {
 		std::getline(file, line);
 		std::cout << line << std::endl;
 		symbol = line.substr(0, line.find(','));
-		write_to_csv(symbol);
+		write_to_csv(symbol, date_string);
 	}
 	file.close();
 }
+
+
