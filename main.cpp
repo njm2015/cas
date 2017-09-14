@@ -51,7 +51,7 @@ int main() {
 		
 	}
 */
-	write_companies(2937, "1/1/2000", "nasdaq_list.csv");
+	write_companies(3115, "1/1/2000", "nasdaq_list.csv");
 
 	return 0;
 }
