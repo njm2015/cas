@@ -15,7 +15,7 @@
 std::pair<std::vector<std::string>, std::list<std::string>> parse_args(std::string query) {
 
 	std::vector<std::string> args;
-	std::list<std::string> flags;
+	std::list<std::string> flags;		// No use for flag list yet.
 
 	std::string curr_string = query;
 
@@ -59,8 +59,8 @@ bool validate_date(tm* date) {
 	time(&rawtime);
 	curr = localtime(&rawtime);
 
-	std::list<int> thirty = {3, 5, 8, 10};
-	std::list<int> thirty_one = {0, 2, 4, 6, 7, 9, 11};
+	std::list<int> thirty = {3, 5, 8, 10};				// Months containing 30 days
+	std::list<int> thirty_one = {0, 2, 4, 6, 7, 9, 11}; // Months containing 31 days
 
 	if((std::find(thirty.begin(), thirty.end(), date->tm_mon) != thirty.end() && date->tm_mday > 30) ||
 	   (std::find(thirty_one.begin(), thirty_one.end(), date->tm_mon) != thirty_one.end() && date->tm_mday > 31) ||
@@ -122,8 +122,8 @@ tm* parse_date(std::string date) {
 	}
 
 	if(times.size() == 2) {
-		ret->tm_mon = times[0] - 1;
-		ret->tm_mday = times[1];
+		ret->tm_mon = times[0] - 1;			// offsets due to format
+		ret->tm_mday = times[1];			// that tm object is stored
 		ret->tm_year = stoi(date) - 1900;
 	} else {
 		error("in parsing date. Enter valid date MM/DD/YYYY");
@@ -162,7 +162,7 @@ double large_number_parse(std::string num_string) {
 
 std::string reverse_large_number_parse(double num_double) {
 
-	double epsilon = 0.1;
+	double epsilon = 0.1;	// Variable that can be adjusted to user preference
 	char suffix;
 	std::string num_string;
 	std::stringstream stream;

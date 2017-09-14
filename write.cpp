@@ -8,7 +8,7 @@
 
 void write_to_csv(std::string symbol, std::string date_string) {
 
-	std::string filename = std::string("/Volumes/Nathaniel/") + symbol + std::string(".csv");
+	std::string filename = std::string("../database/") + symbol + std::string(".csv"); // path to database
 
 	std::ofstream file;
 	file.open(filename, std::ios::out);
@@ -19,8 +19,8 @@ void write_to_csv(std::string symbol, std::string date_string) {
 
 	tm *date = parse_date(date_string);
 
-	while(date_compare(date, curr, true)) {
-		std::cout << date_to_string(date) << std::endl;
+	while(date_compare(date, curr, true)) {					// Stops when date is past current date
+		std::cout << date_to_string(date) << std::endl;		// Purely for debugging purposes
 
 		price_pair prices = get_price(symbol, date, 90);
 		std::vector<std::string> date_list = prices.date_arr;
@@ -42,8 +42,8 @@ void write_to_csv(std::string symbol, std::string date_string) {
 
 		int week_day = day_of_week(date->tm_mday, date->tm_mon+1, date->tm_year+1900);
 
-		if(week_day == 6 || week_day == 0) {
-			add_to_date_no_weekends(date, 0);
+		if(week_day == 6 || week_day == 0) {	// If date is weekend, add appropriate number
+			add_to_date_no_weekends(date, 0);	// of days to itself to be a business day
 		} else {
 			add_to_date_no_weekends(date, 1);
 		}
@@ -65,13 +65,13 @@ void write_companies(int skip, std::string date_string, std::string source) {
 
 	std::getline(file, line);
 
-	while(skip > 2) {
-		std::getline(file, line);
+	while(skip > 2) {				// Skip lines until desired
+		std::getline(file, line);	// line (skip) is reached
 		skip--;
 	}
 
-	while(file.good()) {
-		std::getline(file, line);
+	while(file.good()) {							
+		std::getline(file, line);					// Parse stock symbol list
 		std::cout << line << std::endl;
 		symbol = line.substr(0, line.find(','));
 		write_to_csv(symbol, date_string);

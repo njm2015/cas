@@ -17,8 +17,8 @@
 #include "msc_func_list.h"
 #include "write.h"
 
-enum MainValue { MAIN_BASE, EXITT, PRINT, GET, HELP };
-enum SubValue { SUB_BASE, PRICE, PE, DIFF, EPS, CAP, CALL, PUT };
+enum MainValue { MAIN_BASE, EXITT, PRINT, GET, HELP };				// Main calls
+enum SubValue { SUB_BASE, PRICE, PE, DIFF, EPS, CAP, CALL, PUT };	// Sub calls
 
 static std::map<std::string, MainValue> mapMainVals;
 static std::map<std::string, SubValue> mapSubVals;
@@ -30,6 +30,8 @@ void initialize_main_value();
 void initialize_sub_value();
 
 int main() {
+
+	// Uncomment to use interpreter
 
 /*
 	initialize_main_value();

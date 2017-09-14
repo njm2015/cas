@@ -77,6 +77,11 @@ std::string reverse_large_number_parse(double num_double);
 
 int get_precision(double num, double epsilon);
 
+/**
+* Outputs a tm object given a date in MM/DD/YYYY form.
+* @param date_string Reference date
+* @return tm object holding reference date
+**/
 tm* parse_string_date(std::string date_string);
 
 #endif

@@ -12,7 +12,7 @@
 #include "print_func_list.h"
 #include "msc_func_list.h"
 
-static std::streamsize ss = std::cout.precision();
+static std::streamsize ss = std::cout.precision(); // Default precision
 
 void print_price_header() {
 
@@ -93,7 +93,7 @@ void print_diff(std::vector<std::string> args, std::list<std::string> flags) {
 		std::cout << "\t\t" << diff[0] << "\t\t";
 		std::cout.precision(get_precision(diff[1], 0.01));
 		std::cout << diff[1] << std::endl;
-		std::cout.precision(ss);
+		std::cout.precision(ss); // set precision back to default
 	} else {
 		std::cout << "error" << std::endl;
 	}
@@ -139,7 +139,7 @@ void print_option(std::vector<std::string> args, std::list<std::string> flags) {
 	if(args.size() < 3) {
 		usage("print option call");
 	} else if(args.size() == 4) {
-
+		/* THIS PART DOES NOT WORK AS OF 9/14/2017 -- seg fault */
 		bool call = (args[0] == "call") ? true : false;
 		args.erase(args.begin());
 
@@ -158,7 +158,7 @@ void print_option(std::vector<std::string> args, std::list<std::string> flags) {
 		delete date;
 
 	} else if(args.size() == 3) {
-
+		/* This part works */
 		bool call = (args[0] == "call") ? true : false;
 		args.erase(args.begin());
 
@@ -188,6 +188,8 @@ void print_option(std::vector<std::string> args, std::list<std::string> flags) {
 }
 
 void print_help() {
+
+	/* Also, please read README */
 
 	std::cout << "\nexit\t\t\t\t\tterminate the program\n" << std::endl;
 	std::cout << "print" << std::endl;

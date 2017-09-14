@@ -94,8 +94,6 @@ int add_to_date_no_weekends(tm* date, int day);
 
 long get_opt_seconds(tm* date);
 
-std::string modify_date_format(std::string date);
-
 /**
 * Converts date into a readable format
 * @param date The date to be converted
@@ -104,8 +102,31 @@ std::string modify_date_format(std::string date);
 
 std::string date_to_string(tm* date);
 
+/**
+* Given a date in "Month day, Year" format, returns a string
+* in format MM/DD/YYYY format.
+* @param date Reference string
+* @return Reference string in format MM/DD/YYYY
+**/
+std::string modify_date_format(std::string date);
+
+/**
+* Given a vector dates where dates[0] == month, dates[1] == day
+* and dates[2] == year all in string format, returns a tm object
+* containing this data.
+* @param dates String vector containing the date
+* @return tm object containing the reference date
+**/
 tm* string_to_date(std::vector<std::string> dates);
 
+/**
+* Given a reference date and a vector of dates, returns the
+* first date in the vector which occurs after the reference date.
+* @param date Reference date
+* @param date_list Vector of dates
+* @return pointer to the closest tm object after the reference 
+* date.
+**/
 tm* closest_date(tm* date, std::vector<tm*> date_list);
 
 /**
