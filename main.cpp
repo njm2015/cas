@@ -17,8 +17,8 @@
 #include "msc_func_list.h"
 #include "write.h"
 
-enum MainValue { MAIN_BASE, EXITT, PRINT, GET, HELP };
-enum SubValue { SUB_BASE, PRICE, PE, DIFF, EPS, CAP, CALL, PUT };
+enum MainValue { MAIN_BASE, EXITT, PRINT, GET, HELP };				// Main calls
+enum SubValue { SUB_BASE, PRICE, PE, DIFF, EPS, CAP, CALL, PUT };	// Sub calls
 
 static std::map<std::string, MainValue> mapMainVals;
 static std::map<std::string, SubValue> mapSubVals;
@@ -31,7 +31,9 @@ void initialize_sub_value();
 
 int main() {
 
-/*
+	// Uncomment to use interpreter
+
+
 	initialize_main_value();
 	initialize_sub_value();
 
@@ -48,8 +50,8 @@ int main() {
 		main_choose(parse_args(query));
 		
 	}
-*/
-	write_companies(3115, "1/1/2000", "nasdaq_list.csv");
+
+	//write_companies(3115, "1/1/2000", "nasdaq_list.csv");
 
 	return 0;
 }

@@ -41,7 +41,7 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 		return ret;
 	}
 
-	tm* temp_date = new tm();
+	tm* temp_date = new tm();				// Create this only for URL purposes
 	temp_date->tm_mday = date->tm_mday;
 	temp_date->tm_mon = date->tm_mon;
 	temp_date->tm_year = date->tm_year;
@@ -67,7 +67,7 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 			+ std::to_string((int)seconds_0) + "&period2="
 			+ std::to_string((int)seconds_1) + "&interval=1d&filter=history&frequency=1d";
 
-	std::cout << URL << std::endl;
+	std::cout << URL << std::endl;	// Purely for debugging purposes
 
 	html = get_page(URL);
 
@@ -256,7 +256,7 @@ std::pair<std::vector<std::vector<double>>, std::vector<std::string>> get_option
 	xmlDoc* doc_1 = get_tree(html);
 	xmlpp::Element* root_1 = new xmlpp::Element(get_root(doc_1));
 
-	std::vector<tm*> date_list;
+	std::vector<tm*> date_list;		// Will store the list of option strike dates
 
 	for(int i = 1; i > 0; i++) {
 
@@ -388,8 +388,6 @@ std::pair<std::vector<std::vector<double>>, std::vector<std::string>> get_option
 
 		int i;
 
-		std::cout << __LINE__ << std::endl;
-
 		for(i = 1; distance_from_strike - strike < last_distance && distance_from_strike > 0; i++) {
 
 			if(call) {
@@ -420,8 +418,6 @@ std::pair<std::vector<std::vector<double>>, std::vector<std::string>> get_option
 			}
 		}
 
-		std::cout << __LINE__ << std::endl;
-
 		i = (i == 1) ? 1 : i-1;
 
 		if(call) {
@@ -442,8 +438,6 @@ std::pair<std::vector<std::vector<double>>, std::vector<std::string>> get_option
 
 		std::cout << xpath << std::endl;
 
-		std::cout << __LINE__ << std::endl;
-
 		std::cout << "[i]: " << i << std::endl;
 
 		std::string temp_double;
@@ -451,16 +445,12 @@ std::pair<std::vector<std::vector<double>>, std::vector<std::string>> get_option
 		auto element = root_2->find(xpath);
 		if(element.size() == 1) {
 			std::cout << element.size() << std::endl;
-			std::cout << __LINE__ << std::endl;
 			std::cout << dynamic_cast<xmlpp::ContentNode*>(element[0])->get_content() << std::endl;
-			std::cout << __LINE__ << std::endl;
 			delete element[0];
-			std::cout << __LINE__ << std::endl;
 		}
 
 		//temp_ret_price.push_back(temp_double);
 
-		std::cout << __LINE__ << std::endl;
 
 		for(int j = 4; j <= 6; j++) {
 
