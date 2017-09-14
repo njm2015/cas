@@ -33,7 +33,7 @@ int main() {
 
 	// Uncomment to use interpreter
 
-/*
+
 	initialize_main_value();
 	initialize_sub_value();
 
@@ -50,8 +50,8 @@ int main() {
 		main_choose(parse_args(query));
 		
 	}
-*/
-	write_companies(3115, "1/1/2000", "nasdaq_list.csv");
+
+	//write_companies(3115, "1/1/2000", "nasdaq_list.csv");
 
 	return 0;
 }

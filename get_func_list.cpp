@@ -67,7 +67,7 @@ price_pair get_price(std::string symbol, tm* date, int day_future) {
 			+ std::to_string((int)seconds_0) + "&period2="
 			+ std::to_string((int)seconds_1) + "&interval=1d&filter=history&frequency=1d";
 
-	std::cout << URL << std::endl;
+	std::cout << URL << std::endl;	// Purely for debugging purposes
 
 	html = get_page(URL);
 
