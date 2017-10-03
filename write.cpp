@@ -1,14 +1,20 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+//#include <pthread.h>
 #include "write.h"
 #include "get_func_list.h"
 #include "msc_func_list.h"
 #include "parser.h"
 
-void write_to_csv(std::string symbol, std::string date_string) {
+typedef struct _write_data {
+	std::string symbol;
+	std::string date_string;
+} write_data;
 
-	std::string filename = std::string("../database/") + symbol + std::string(".csv"); // path to database
+void write_to_csv(write_data w) {
+
+	std::string filename = std::string("../database/") + w.symbol + std::string(".csv"); // path to database
 
 	std::ofstream file;
 	file.open(filename, std::ios::out);
@@ -17,12 +23,12 @@ void write_to_csv(std::string symbol, std::string date_string) {
 	time(&rawtime);
 	tm* curr = localtime(&rawtime);
 
-	tm *date = parse_date(date_string);
+	tm *date = parse_date(w.date_string);
 
 	while(date_compare(date, curr, true)) {					// Stops when date is past current date
 		std::cout << date_to_string(date) << std::endl;		// Purely for debugging purposes
 
-		price_pair prices = get_price(symbol, date, 90);
+		price_pair prices = get_price(w.symbol, date, 90);
 		std::vector<std::string> date_list = prices.date_arr;
 		std::vector<std::vector<double>> price_list = prices.price_arr;
 
@@ -74,7 +80,12 @@ void write_companies(int skip, std::string date_string, std::string source) {
 		std::getline(file, line);					// Parse stock symbol list
 		std::cout << line << std::endl;
 		symbol = line.substr(0, line.find(','));
-		write_to_csv(symbol, date_string);
+
+		write_data w;
+		w.symbol = symbol;
+		w.date_string = date_string;
+
+		write_to_csv(w);
 	}
 	file.close();
 }
