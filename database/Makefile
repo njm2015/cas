@@ -1,0 +1,23 @@
+CXX = g++
+CXXFLAGS = -Wall -g -pg `xml2-config --cflags --libs` `pkg-config libxml++-2.6 --cflags --libs` --std=c++1y -Wno-inconsistent-missing-override
+
+
+LDFLAGS = -lcurl `pkg-config libxml++-2.6 --cflags --libs`
+
+OBJECTS = main.o parser.o msc_func_list.o get_func_list.o print_func_list.o write.o
+
+main: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o main $(LDFLAGS)
+
+main.o: main.cpp
+	$(CXX) $(CXXFLAGS) -c main.cpp
+
+parser.o: parser.cpp parser.h
+	$(CXX) $(CXXFLAGS) -c parser.cpp
+
+write.o: write.cpp write.h
+	$(CXX) $(CXXFLAGS) -c write.cpp
+
+clean:
+	rm *.o main
+
