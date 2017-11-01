@@ -1,8 +1,11 @@
 #include "Date.h"
 
-Date::Date() : month(0), day(0), year(0) {}
+static const std::list<int> thirty = {4, 6, 9, 11};
+static const std::list<int> thirty_one = {1, 3, 5, 7, 8, 10, 12};
 
-Date::Date(std::string str) {
+Date::Date() : minute(0), hour(0), day(0), month(0), year(0) {}
+
+Date::Date(std::string str) : minute(0), hour(0) {
 	std::vector<int> date_args;
 	size_t found, start_i = 0;
 
@@ -38,6 +41,17 @@ int Date::get_minute() {
 	return this->minute;
 }
 
+int Date::get_days_in_month() {
+	if(std::find(thirty_one.begin(), thirty_one.end(), this->month) 
+													!= thirty_one.end()) {
+		return 31;
+	} else if(this->month == 2) {
+		return 28;
+	} else {
+		return 30;
+	}
+}
+
 void Date::set_day(int day) {
 	if(day <= 0 || day > 31) {
 		return;
@@ -71,6 +85,61 @@ void Date::set_minute(int minute) {
 		return;
 	}
 	this->minute = minute;
+}
+
+void Date::fix_month() {
+	if(m > 11) {
+		int m = this->month - 1;
+		int y = m / 12;
+		m = m % y;
+		this->year += y;
+		this->month = m + 1;
+
+		return 1;
+	}
+	return 0;
+}
+
+void Date::fix_day() {
+	int ret_val = 0;
+	while(this->day > this->get_days_in_month()) {
+		this->day -= this->get_days_in_month();
+		++this->month;
+		this->fix_month();
+		ret_val = 1;
+	}
+	return ret_val;
+}
+
+void Date::fix_hour() {
+	if(this->hour > 23) {
+		int d = this->hour / 24;
+		this->hour = this->hour % d;
+		this->day += d;
+		return 1;
+	}
+	return 0;
+}
+
+void Date::fix_minute() {
+	if(this->minute > 60) {
+		int h = this->minute / 60;
+		this->minute = this->minute % h;
+		this->hour += h;
+		return 1;
+	}
+	return 0;
+}
+
+void Date::add_date(int minutes) {
+	this->minute += minutes;
+	if(this->fix_minute()) {
+		if(this->fix_hour()) {
+			if(this->fix_day()) {
+				this->fix_month();
+			}
+		}
+	}
 }
 
 void Date::print_date() {

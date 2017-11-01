@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <iostream>
+#include <list>
+#include <algorithm>
 
 class Date {
 
@@ -17,6 +19,7 @@ public:
 	int get_year();
 	int get_hour();
 	int get_minute();
+	int get_days_in_month();
 
 	void set_day(int day);
 	void set_month(int month);
@@ -24,16 +27,18 @@ public:
 	void set_hour(int hour);
 	void set_minute(int minute);
 
+	int fix_month();
+	int fix_hour();
+	int fix_day();
+	int fix_minute();
+
 	void add_date(int minutes);
 
 	void print_date();
 
 private:
-	int month; // January = 1, ...
-	int day; // 1-31
-	int year;
-	int hour;
-	int minute;
+	int minute, hour, day, month, year;
+
 };
 
 #endif
