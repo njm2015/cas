@@ -1,82 +1,66 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "write.h"
-#include "get_func_list.h"
-#include "msc_func_list.h"
-#include "parser.h"
+#include <string>
+#include <curl/curl.h>
 
-void write_to_csv(std::string symbol, std::string date_string) {
+typedef struct _thread_data {
+	std::string symbol;
+	Date *d;
+} thread_data;
 
-	std::string filename = std::string("../database/") + symbol + std::string(".csv"); // path to database
+std::vector<std::string> create_threads(std::vector<std::string> symbols, Date *d) {
+	int num_threads = symbols.size();
 
-	std::ofstream file;
-	file.open(filename, std::ios::out);
+	thread_data td[num_threads];
+	pthread_t tid[num_threads];
+	std::vector<std::string> res;
 
-	time_t rawtime;
-	time(&rawtime);
-	tm* curr = localtime(&rawtime);
-
-	tm *date = parse_date(date_string);
-
-	while(date_compare(date, curr, true)) {					// Stops when date is past current date
-		std::cout << date_to_string(date) << std::endl;		// Purely for debugging purposes
-
-		price_pair prices = get_price(symbol, date, 90);
-		std::vector<std::string> date_list = prices.date_arr;
-		std::vector<std::vector<double>> price_list = prices.price_arr;
-
-		for(int i = date_list.size() - 1; i >= 0; i--) {
-			size_t temp = date_list[i].find(',');
-			date_list[i] = date_list[i].substr(0, temp) + date_list[i].substr(temp+1);
-			file << modify_date_format(date_list[i]);
-			for(int j = 0; j < price_list[i].size(); j++) {
-				file << "," << price_list[i][j];
-			}
-			file << "\n";
-		}
-
-		date->tm_mday = prices.day;
-		date->tm_mon = prices.month;
-		date->tm_year = prices.year;
-
-		int week_day = day_of_week(date->tm_mday, date->tm_mon+1, date->tm_year+1900);
-
-		if(week_day == 6 || week_day == 0) {	// If date is weekend, add appropriate number
-			add_to_date_no_weekends(date, 0);	// of days to itself to be a business day
-		} else {
-			add_to_date_no_weekends(date, 1);
-		}
-
+	for(size_t i = 0; i < num_threads; ++i) {
+		td[i].symbol = symbols[i];
+		td[i].d = d;
+		pthread_create(&tid[i], NULL, get_data, &td[i]);
 	}
 
-	delete date;
+	std::string temp_res;
 
-	file.close();
+	for(size_t i = 0; i < num_threads, ++i) {
+		pthread_join(tid[i], (void*)temp_res);
+		res.push_back(*temp_res);
+	}
+
+	return res;
 }
 
-void write_companies(int skip, std::string date_string, std::string source) {
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+	((std::string*)userp)->append((char*)contents, size * nmemb);
+	return size * nmemb;
+}
 
-	std::string filename = source;
+void *get_data(void *ptr) {
 
-	std::ifstream file (filename);
+	CURL* curl;
+	CURLcode res;
+	std::string readBuffer;
 
-	std::string line, symbol;
+	curl = curl_easy_init();
 
-	std::getline(file, line);
+	const char* URL = "https://www.quandl.com/api/v3/datasets/WIKI/" + symbol + ".csv?"
+					"&start_date=2017-11-01&end_date=2017-11-07&api_key=dmHSV7g6x4TNGkyypv8q";
 
-	while(skip > 2) {				// Skip lines until desired
-		std::getline(file, line);	// line (skip) is reached
-		skip--;
+	if(curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, URL);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		res = curl_easy_perform(curl);
+
+		curl_easy_cleanup(curl);
+
 	}
 
-	while(file.good()) {							
-		std::getline(file, line);					// Parse stock symbol list
-		std::cout << line << std::endl;
-		symbol = line.substr(0, line.find(','));
-		write_to_csv(symbol, date_string);
-	}
-	file.close();
+	std::string *ret_string = new std::string(readBuffer);
+
+	return (void*)ret_string;
 }
 
 

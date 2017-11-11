@@ -10,15 +10,15 @@ Date::Date(std::string str) : minute(0), hour(0) {
 	size_t found, start_i = 0;
 
 	for(size_t i = 0; i < 2; ++i) {
-		found = str.find("/");
+		found = str.find("-");
 		date_args.push_back(std::stoi(str.substr(start_i, found - start_i)));
 		str = str.substr(found+1);
 	}
 	date_args.push_back(std::stoi(str));
 
-	this->month = date_args[0];
-	this->day = date_args[1];
-	this->year = date_args[2];
+	this->year = date_args[0];
+	this->month = date_args[1];
+	this->day = date_args[2];
 }
 
 int Date::get_day() {
@@ -87,8 +87,8 @@ void Date::set_minute(int minute) {
 	this->minute = minute;
 }
 
-void Date::fix_month() {
-	if(m > 11) {
+int Date::fix_month() {
+	if(this->month > 11) {
 		int m = this->month - 1;
 		int y = m / 12;
 		m = m % y;
@@ -100,7 +100,7 @@ void Date::fix_month() {
 	return 0;
 }
 
-void Date::fix_day() {
+int Date::fix_day() {
 	int ret_val = 0;
 	while(this->day > this->get_days_in_month()) {
 		this->day -= this->get_days_in_month();
@@ -111,7 +111,7 @@ void Date::fix_day() {
 	return ret_val;
 }
 
-void Date::fix_hour() {
+int Date::fix_hour() {
 	if(this->hour > 23) {
 		int d = this->hour / 24;
 		this->hour = this->hour % d;
@@ -121,7 +121,7 @@ void Date::fix_hour() {
 	return 0;
 }
 
-void Date::fix_minute() {
+int Date::fix_minute() {
 	if(this->minute > 60) {
 		int h = this->minute / 60;
 		this->minute = this->minute % h;
@@ -142,7 +142,13 @@ void Date::add_date(int minutes) {
 	}
 }
 
-void Date::print_date() {
-	std::cout << "Day: " << this->day << "\tMonth: " << this->month <<
-				"\tYear: " << this->year << std::endl;
+std::string Date::get_date_URL() {
+	return std::to_string(this->year) + "-" + std::to_string(this->month)
+			+ "-" + std::to_string(this->day);
+}
+
+std::string Date::get_date_full() {
+	return std::to_string(this->year) + "-" + std::to_string(this->month)
+			+ "-" + std::to_string(this->day) + " " + 
+			std::to_string(this->hour) + ":" + std::to_string(this->minute);
 }

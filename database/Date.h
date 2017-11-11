@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <list>
+#include <string>
 #include <algorithm>
 
 class Date {
@@ -34,7 +35,8 @@ public:
 
 	void add_date(int minutes);
 
-	void print_date();
+	std::string get_date_URL();
+	std::string get_date_full();
 
 private:
 	int minute, hour, day, month, year;
